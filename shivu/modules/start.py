@@ -7,7 +7,7 @@ from shivu import pm_users as collection
 import logging
 
 private = ["https://postimage.me/image/1df98d70e8c9f0c00426c3251c63a583.UMJdS4https://postimage.me/image/cf9a427cbe3cc531fcc9c28926b60b71.UMJF4e", "https://postimage.me/image/1ab368db00683ddb5ae51dd812b1cdc1.UMJPus"]
-group = ["http://postimg.cc/PLDVdy9c", "http://postimg.cc/mPJ6xJXC", "http://postimg.cc/ZWCDM4cJ"]
+group = ["https://postimage.me/image/dcf5916afcd09500a9fc18455622dfd9.UMJyAj", "https://postimage.me/image/90ddff5520df99d869165f2ccd665ad9.UMJYkW"]
 
 # Set up logging
 logging.basicConfig(
