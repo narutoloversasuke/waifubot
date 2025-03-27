@@ -1,14 +1,14 @@
 from telegram import Update
 from itertools import groupby
 import math
-from html import escape 
+from html import escape
 import random
 from telegram.ext import CommandHandler, CallbackContext, CallbackQueryHandler
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup
 from shivu import collection, user_collection, application
 
 
-async def harem(update: Update, context: CallbackContext, page=0) -> None:
+async def sealedvault(update: Update, context: CallbackContext, page=0) -> None:
     user_id = update.effective_user.id
     user = await user_collection.find_one({'id': user_id})
 
@@ -27,14 +27,14 @@ async def harem(update: Update, context: CallbackContext, page=0) -> None:
     if page < 0 or page >= total_pages:
         page = 0  
 
-    harem_message = f"<b>{escape(update.effective_user.first_name)}'s Harem - Page {page+1}/{total_pages}</b>\n"
+    harem_message = f"<b>{escape(update.effective_user.first_name)}'s Sealed Vault - Page {page+1}/{total_pages}</b>\n"
     current_characters = unique_characters[page*15:(page+1)*15]
     current_grouped_characters = {k: list(v) for k, v in groupby(current_characters, key=lambda x: x['anime'])}
 
     for anime, characters in current_grouped_characters.items():
         harem_message += f'\n<b>{anime} {len(characters)}/{await collection.count_documents({"anime": anime})}</b>\n'
         for character in characters:
-            count = character_counts[character['id']]  
+            count = character_counts[character['id']]
             harem_message += f'{character["id"]} {character["name"]} ×{count}\n'
 
     total_count = len(user['characters'])
@@ -43,9 +43,9 @@ async def harem(update: Update, context: CallbackContext, page=0) -> None:
     if total_pages > 1:
         nav_buttons = []
         if page > 0:
-            nav_buttons.append(InlineKeyboardButton("⬅️", callback_data=f"harem:{page-1}:{user_id}"))
+            nav_buttons.append(InlineKeyboardButton("⬅️", callback_data=f"sealedvault:{page-1}:{user_id}"))
         if page < total_pages - 1:
-            nav_buttons.append(InlineKeyboardButton("➡️", callback_data=f"harem:{page+1}:{user_id}"))
+            nav_buttons.append(InlineKeyboardButton("➡️", callback_data=f"sealedvault:{page+1}:{user_id}"))
         keyboard.append(nav_buttons)
 
     reply_markup = InlineKeyboardMarkup(keyboard)
@@ -82,10 +82,10 @@ async def harem(update: Update, context: CallbackContext, page=0) -> None:
                         await update.callback_query.edit_message_text(harem_message, parse_mode='HTML', reply_markup=reply_markup)
         else:
             if update.message:
-                await update.message.reply_text("Your List is Empty :)")
+                await update.message.reply_text("Your Vault is Empty :)")
 
 
-async def harem_callback(update: Update, context: CallbackContext) -> None:
+async def sealedvault_callback(update: Update, context: CallbackContext) -> None:
     query = update.callback_query
     data = query.data
     _, page, user_id = data.split(':')
@@ -93,26 +93,11 @@ async def harem_callback(update: Update, context: CallbackContext) -> None:
     user_id = int(user_id)
 
     if query.from_user.id != user_id:
-        await query.answer("its Not Your Harem", show_alert=True)
+        await query.answer("It's Not Your Vault", show_alert=True)
         return
 
-    await harem(update, context, page)
+    await sealedvault(update, context, page)
 
 
-async def sealedvault(update: Update, context: CallbackContext) -> None:
-    user_id = update.effective_user.id
-    user = await user_collection.find_one({'id': user_id})
-
-    if not user or 'sealed_waifus' not in user or not user['sealed_waifus']:
-        await update.message.reply_text("📜 The vault doors remain shut… You have no sealed waifus yet! 🏺")
-        return
-
-    waifu_list = '\n'.join([f"🔹 {waifu['name']} ({waifu['anime']})" for waifu in user['sealed_waifus']])
-    message = f"🔮 The Arcane Vault trembles as its seals unravel… With a whisper of forgotten magic, the sealed sprites emerge, their forms shimmering within your eternal grasp. 🏺\n\n{waifu_list}"
-
-    await update.message.reply_text(message)
-
-
-application.add_handler(CommandHandler(["harem", "collection"], harem, block=False))
-application.add_handler(CallbackQueryHandler(harem_callback, pattern='^harem', block=False))
-application.add_handler(CommandHandler("sealedvault", sealedvault, block=False))
+application.add_handler(CommandHandler(["sealedvault", "collection"], sealedvault, block=False))
+application.add_handler(CallbackQueryHandler(sealedvault_callback, pattern='^sealedvault', block=False))
