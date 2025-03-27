@@ -4,8 +4,8 @@ class Config(object):
     # Get this value from my.telegram.org/apps
     OWNER_ID = "7885908019"
     sudo_users = "7885908019", "7640076990", "7756901810" 
-    GROUP_ID =-1002640379822
-    TOKEN = "7583740884:AAG1KtjKSDlR3DogiWDuWBY_DQnkktbpHQ8" 
+    GROUP_ID = -1002640379822
+    TOKEN = "7656541596:AAEkC5jxXlArTehwTS9lmm61Xqi5cLpuPrk"  # Updated Token
     mongo_url = "mongodb+srv://naruhina:harshitkichut@cluster0.03pl6.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0" 
     PHOTO_URL = "https://files.catbox.moe/0nb1p7.jpg" 
     SUPPORT_CHAT = "blade_x_support"
