@@ -6,8 +6,9 @@ from shivu import application, SUPPORT_CHAT, UPDATE_CHAT, BOT_USERNAME, db, GROU
 from shivu import pm_users as collection
 import logging
 
-private = ["https://postimage.me/image/1df98d70e8c9f0c00426c3251c63a583.UMJdS4",https://postimage.me/image/cf9a427cbe3cc531fcc9c28926b60b71.UMJF4e", "https://postimage.me/image/1ab368db00683ddb5ae51dd812b1cdc1.UMJPus"]
-group = ["https://postimage.me/image/dcf5916afcd09500a9fc18455622dfd9.UMJyAj", "https://postimage.me/image/90ddff5520df99d869165f2ccd665ad9.UMJYkW"]
+
+private = ["http://postimg.cc/0btBnb7t", "http://postimg.cc/Yh2PQ1LG", " http://postimg.cc/K4DVK9jh"]
+group= ["http://postimg.cc/PLDVdy9c", "http://postimg.cc/mPJ6xJXC", "http://postimg.cc/ZWCDM4cJ"]
 
 # Set up logging
 logging.basicConfig(
@@ -18,48 +19,29 @@ logger = logging.getLogger(__name__)
 
 # Constants for button labels and URLs
 ADD_BUTTON_TEXT = "ADD ME"
-ADD_BUTTON_URL = f'http://t.me/{BOT_USERNAME}?startgroup=new'
+ADD_BUTTON_URL = f'http://t.me/Madara_Husbando_grabber_Bot?startgroup=new'
 SUPPORT_BUTTON_TEXT = "SUPPORT"
 UPDATE_BUTTON_TEXT = "UPDATES"
 HELP_BUTTON_TEXT = "HELP"
 SOURCE_BUTTON_TEXT = "SOURCE"
+# Better to use GitHub
 
-# Updated Start Message
-START_CAPTION = """Nyaa~! Welcome home, Goshujin-sama!~ (≧◡≦) ♡
-Your waifu adventure starts meow~! 💕✨
-
-🐾 /sealwaifu – Seal a super cute waifu! 🎀
-🌸 /upload – Add even more adorable waifus! 🥰
-
-Will you become the ultimate waifu master? (๑>ᴗ<๑)!~"""
+# Message templates
+START_CAPTION = """*Heyyyy...* ✨
+*I am An Open Source Character Catcher Bot... Add me in your group, and I will send random characters after every 100 messages in the group. Use /guess to collect characters and check your collection with /Harem. So add me in your groups and collect your harem!*"""
 
 GROUP_CAPTION = "🎴 Alive!?... Connect to me in PM for more information."
 
-# Updated Help Message
-HELP_TEXT = """✅ Check if you’re alive: /checkseal  
-🚀 Start the journey: /start  
-
-🎲 Play & win coins: /rocket  
-🪙 Win coins randomly: /luckdraw  
-🏹 Explore & earn coins: /explore  
-
-🔒 Add a waifu: /sealwaifu  
-📜 See your waifus: /sealedvault  
-🏆 Top global waifu collectors: /topgroups  
-👑 Top global users: /top  
-🎭 Top waifu collectors in this group: /ctop  
-
-🔄 Trade a waifu: /soultrade  
-🎁 Gift a waifu: /giftseal  
-💰 Sell a waifu: /wsell  
-
-⏳ Change waifu claim time: /sealshift  
-🏪 Enter Waifu Market: /slaveshop  
-
-📊 See your progress report: /sealedprogress  
-💎 Check your balance: /soulbalance  
-🎟️ Redeem a code: /sealredeem  
-🔑 Generate a code: /sealcode"""
+HELP_TEXT = """*Help Section:*
+*/guess* - To guess a character (works in groups only)
+*/fav* - Add your favorite character
+*/trade* - Trade characters
+*/gift* - Give a character from your collection to another user (works in groups only)
+*/collection* - View your collection
+*/topgroups* - See the top groups where people guess the most
+*/top* - View top users
+*/ctop* - Your chat's top users
+*/changetime* - Change character appearance time (works in groups only)"""
 
 async def start(update: Update, context: CallbackContext) -> None:
     """Send a welcome message when the command /start is issued."""
@@ -101,6 +83,7 @@ async def start(update: Update, context: CallbackContext) -> None:
             [InlineKeyboardButton(SOURCE_BUTTON_TEXT, url=f"http://postimg.cc/bsFFs4YF")]
         ]
         reply_markup = InlineKeyboardMarkup(keyboard)
+        
 
         # Send appropriate message based on chat type
         if update.effective_chat.type == "private":
