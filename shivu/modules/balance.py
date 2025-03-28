@@ -190,7 +190,7 @@ async def xp(update, context):
 application.add_handler(CommandHandler("roll", roll, block=False))
 application.add_handler(CommandHandler("xp", xp, block=False))
 application.add_handler(CommandHandler("bal", balance, block=False))
-application.add_handler(CommandHandler("pay", pay, block=False))
+#application.add_handler(CommandHandler("pay", pay, block=False))
 application.add_handler(CommandHandler("Tophunters", mtop, block=False))
 application.add_handler(CommandHandler("claim", daily_reward, block=False))
 application.add_handler(CommandHandler("explore", random_daily_reward, block=True))
