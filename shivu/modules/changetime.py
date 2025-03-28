@@ -23,8 +23,8 @@ async def change_time(client: Client, message: Message):
             return
 
         new_frequency = int(args[1])
-        if new_frequency < 100:
-            await message.reply_text("⚠️ The ancient laws forbid frequencies below 100!")
+        if new_frequency < 10:
+            await message.reply_text("⚠️ The ancient laws forbid frequencies below 10!")
             return
 
         chat_frequency = await user_totals_collection.find_one_and_update(
