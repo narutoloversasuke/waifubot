@@ -11,7 +11,7 @@ class Config(object):
     SUPPORT_CHAT = "blade_x_support"
     UPDATE_CHAT = "blade_x_community"
     BOT_USERNAME = "Devine_wifu_bot"
-    CHARA_CHANNEL_ID = "-1002640379822"
+    CHARA_CHANNEL_ID = "-4705079232"
     api_id = 26626068
     api_hash = "bf423698bcbe33cfd58b11c78c42caa2"
 
