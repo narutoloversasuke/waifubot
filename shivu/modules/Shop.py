@@ -36,20 +36,14 @@ async def shop(update, context):
         message_text += f"💰 **Price:** {char_price} coins\n"
         message_text += "--------------------------\n"
 
-        buttons.append([InlineKeyboardButton(f"Buy {char_name}", callback_data=f"buy_{char_id}")])
+        buttons.append(InlineKeyboardButton(f"Buy {char_name}", callback_data=f"buy_{char_id}"))
 
-    reply_markup = InlineKeyboardMarkup(buttons)
+    reply_markup = InlineKeyboardMarkup([buttons])  # ✅ Fix: All buttons in a single row
     await update.message.reply_text(message_text, reply_markup=reply_markup)
 
-# ✅ Buy Command
-async def buy(update, context):
+# ✅ Buy Function
+async def buy(update, context, character_id):
     user_id = update.effective_user.id
-
-    if not context.args or len(context.args) != 1:
-        await update.message.reply_text('<b>Please provide a valid pick ID to buy.</b>')
-        return
-
-    character_id = context.args[0]  # Get ID from command
 
     # ✅ Fetch character details from store
     character = await collection.find_one({'id': character_id})
@@ -108,14 +102,11 @@ async def handle_button_click(update, context):
 
     if data.startswith("buy_"):
         character_id = data.split("_")[1]  # Extract character ID
-        context.args = [character_id]  # Pass ID to buy function
-        await buy(update, context)  # Call buy function
+        await buy(update, context, character_id)  # ✅ Fix: Pass character_id directly
 
 # ✅ Add Handlers
 shop_handler = CommandHandler("shop", shop, block=False)
-buy_handler = CommandHandler("buy", buy, block=False)
 callback_handler = CallbackQueryHandler(handle_button_click)
 
 application.add_handler(shop_handler)
-application.add_handler(buy_handler)
 application.add_handler(callback_handler)
