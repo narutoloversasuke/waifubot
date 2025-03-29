@@ -20,14 +20,15 @@ async def check_balance(user_id, required_balance):
 async def balance(update, context):
     user_id = update.effective_user.id
     user_data = await user_collection.find_one({'id': user_id})
-    
+
     if user_data:
         balance_amount = user_data.get('balance', 0)
-        balance_message = f"Your Current Balance Is:\nGold Coins: `{balance_amount}`"
+        balance_message = f"🏦 *Your Current Balance:* \n💰 Gold Coins: `{balance_amount}`"
     else:
-        balance_message = "You are not eligible To be a Hunter 🍂"
+        balance_message = "⚠️ You are not eligible to be a Hunter 🍂"
+
+    await update.message.reply_text(balance_message, parse_mode="Markdown")
         
-    await update.message.reply_text(balance_message)
 
 async def random_daily_reward(update, context):
     if update.message.chat.type == "private":
