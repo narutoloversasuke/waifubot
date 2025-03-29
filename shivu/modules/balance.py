@@ -23,8 +23,7 @@ async def balance(update, context):
     
     if user_data:
         balance_amount = user_data.get('balance', 0)
-        tokens_amount = user_data.get('tokens', 0)
-        balance_message = f"Your Current Balance Is :\nGold Coins: `{balance_amount}`\nTokens: `{tokens_amount}`"
+        balance_message = f"Your Current Balance Is:\nGold Coins: `{balance_amount}`"
     else:
         balance_message = "You are not eligible To be a Hunter 🍂"
         
@@ -60,18 +59,13 @@ async def random_daily_reward(update, context):
 
     await user_collection.update_one(
         {'id': user_id},
-        {'$inc': {'tokens': random_reward}}
+        {'$inc': {'balance': random_reward}}
     )
     last_command_time[user_id] = datetime.utcnow()
 
     user_cooldowns[user_id] = datetime.utcnow()
 
-    await update.message.reply_text(f"You {random_message} and got {random_reward} Tokens.🤫")
-
-async def clear_command_ban(context: CallbackContext):
-    user_id = context.job.context
-    if user_id in user_cooldowns:
-        del user_cooldowns[user_id]
+    await update.message.reply_text(f"You {random_message} and got {random_reward} Gold Coins.🤫")
 
 async def mtop(update, context):
     top_users = await user_collection.find({}, projection={'id': 1, 'first_name': 1, 'last_name': 1, 'balance': 1}).sort('balance', -1).limit(10).to_list(10)
@@ -115,83 +109,7 @@ async def format_time_delta(delta):
     minutes, seconds = divmod(remainder, 60)
     return f"{int(hours)}h {int(minutes)}m {int(seconds)}s"
 
-async def roll(update, context):
-    user_id = update.effective_user.id
-    try:
-        amount = int(context.args[0])
-        choice = context.args[1].upper()
-    except (IndexError, ValueError):
-        await update.message.reply_text("Invalid usage, please use /roll <amount> <ODD/EVEN>")
-        return
-
-    if amount < 0:
-        await update.message.reply_text("Amount must be positive.")
-        return
-
-    user_data = await user_collection.find_one({'id': user_id})
-    if not user_data:
-        await update.message.reply_text("User data not found.")
-        return
-
-    balance_amount = user_data.get('balance', 0)
-    if amount < balance_amount * 0.07:
-        await update.message.reply_text("You can bet more than 7% of your balance.")
-        return
-
-    if balance_amount < amount:
-        await update.message.reply_text("Insufficient balance to place the bet.")
-        return
-
-    dice_message = await context.bot.send_dice(update.effective_chat.id, "🎲")
-    dice_value = dice_message.dice.value
-
-    dice_result = "ODD" if dice_value % 2 != 0 else "EVEN"
-
-    xp_change = 0
-
-    if choice == dice_result:
-        xp_change = 4
-        await user_collection.update_one(
-            {'id': user_id},
-            {'$inc': {'balance': amount, 'user_xp': xp_change}}
-        )
-        await update.message.reply_text(f"Dice roll: {dice_value}\nYou won! Your balance increased by {amount * 2}.")
-    else:
-        xp_change = -2
-        await user_collection.update_one(
-            {'id': user_id},
-            {'$inc': {'balance': -amount, 'user_xp': xp_change}}
-        )
-        await update.message.reply_text(f"Dice roll: {dice_value}\nYou lost! {amount} deducted from your balance.")
-
-    await update.message.reply_text(f"XP change: {xp_change}")
-
-async def xp(update, context):
-    user_id = update.effective_user.id
-    user_data = await user_collection.find_one({'id': user_id})
-
-    if not user_data:
-        await update.message.reply_text("User data not found.")
-        return
-
-    xp = user_data.get('user_xp', 0)
-    level = math.floor(math.sqrt(xp / 100)) + 1
-
-    if level > 100:
-        level = 100
-
-    ranks = {1: "E", 10: "D", 30: "C", 50: "B", 70: "A", 90: "S"}
-    rank = next((rank for xp_limit, rank in ranks.items() if level <= xp_limit), None)
-
-    message = f"Your current level is `{level}`\nand your rank is `{rank}`."
-
-    await update.message.reply_text(message)
-
-application.add_handler(CommandHandler("roll", roll, block=False))
-application.add_handler(CommandHandler("xp", xp, block=False))
 application.add_handler(CommandHandler("bal", balance, block=False))
-#application.add_handler(CommandHandler("pay", pay, block=False))
 application.add_handler(CommandHandler("Tophunters", mtop, block=False))
 application.add_handler(CommandHandler("claim", daily_reward, block=False))
 application.add_handler(CommandHandler("explore", random_daily_reward, block=True))
-
