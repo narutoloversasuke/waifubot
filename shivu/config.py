@@ -5,12 +5,13 @@ class Config(object):
     OWNER_ID = "7885908019"
     sudo_users = "7885908019", "7640076990", "7756901810" 
     GROUP_ID = -1002640379822
-    TOKEN = "7656541596:AAEkC5jxXlArTehwTS9lmm61Xqi5cLpuPrk"  # Updated Token
-    mongo_url = "mongodb+srv://walkrock:<supermanxxxx>@sunny.vu6keb7.mongodb.net/?retryWrites=true&w=majority&appName=sunny"
+    TOKEN = "8136650512:AAFC8c8225hPO_q2AFKtZtADMjCRryF1ZJU"  # Updated Token
+    mongo_url = "mongodb+srv://walkrock:supermanxxxx@sunny.vu6keb7.mongodb.net/?retryWrites=true&w=majority&appName=sunny"
+    PHOTO_URL = "https://files.catbox.moe/0nb1p7.jpg" 
     SUPPORT_CHAT = "blade_x_support"
     UPDATE_CHAT = "blade_x_community"
     BOT_USERNAME = "Devine_wifu_bot"
-    CHARA_CHANNEL_ID = "-4705079232"
+    CHARA_CHANNEL_ID = "-4705079232"  # Updated Character Channel
     api_id = 26626068
     api_hash = "bf423698bcbe33cfd58b11c78c42caa2"
 
