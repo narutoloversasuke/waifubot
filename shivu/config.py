@@ -6,8 +6,7 @@ class Config(object):
     sudo_users = "7885908019", "7640076990", "7756901810" 
     GROUP_ID = -1002640379822
     TOKEN = "7656541596:AAEkC5jxXlArTehwTS9lmm61Xqi5cLpuPrk"  # Updated Token
-    mongo_url = "mongodb+srv://naruhina:harshitkichut@cluster0.03pl6.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
-    PHOTO_URL = "https://files.catbox.moe/0nb1p7.jpg" 
+    mongo_url = "mongodb+srv://walkrock:<supermanxxxx>@sunny.vu6keb7.mongodb.net/?retryWrites=true&w=majority&appName=sunny"
     SUPPORT_CHAT = "blade_x_support"
     UPDATE_CHAT = "blade_x_community"
     BOT_USERNAME = "Devine_wifu_bot"
