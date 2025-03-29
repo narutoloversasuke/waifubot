@@ -1,5 +1,5 @@
-from telegram.ext import CommandHandler, CallbackQueryHandler
-from telegram import InlineKeyboardMarkup, InlineKeyboardButton
+from telegram.ext import CommandHandler, CallbackContext
+from telegram import Update
 from shivu import collection, user_collection, application  # Database connection
 
 # ✅ Rarity-wise price mapping
@@ -7,43 +7,52 @@ rarity_prices = {
     "⚪ Common": 2000000,
     "🟣 Normal": 4000000,
     "🔵 Medium": 8000000,
-    "🟡 Legendary": 1500000,
+    "🟡 Legendary": 15000000,
     "💮 Special Edition": 20000000,
     "🔮 Limited Edition": 300000000,
     "🎐 Celestial Beauty": 400000000000
 }
 
-# ✅ Shop Command
-async def shop(update, context):
+# ✅ Shop Command (Shows Waifus With Images)
+async def shop(update: Update, context: CallbackContext):
     characters = await collection.find().to_list(length=10)  # Fetch 10 waifus from database
 
     if not characters:
         await update.message.reply_text("No characters available in the shop right now.")
         return
 
-    message_text = "**🛒 Welcome to the Waifu Shop! 🛒**\n\n"
-    buttons = []
+    await update.message.reply_text("🛒 **Welcome to the Waifu Shop!** 🛒\n\nHere are the available waifus:")
 
     for char in characters:
         char_id = char.get("id", "Unknown")
         char_name = char.get("name", "Unnamed Character")
         char_rarity = char.get("rarity", "Unknown Rarity")
         char_price = rarity_prices.get(char_rarity, 0)  # Get price based on rarity
+        char_image = char.get("image_url", None)  # ✅ Fetch image URL from database
 
-        message_text += f"🆔 **ID:** `{char_id}`\n"
-        message_text += f"📛 **Name:** {char_name}\n"
-        message_text += f"🌟 **Rarity:** {char_rarity}\n"
-        message_text += f"💰 **Price:** {char_price} coins\n"
-        message_text += "--------------------------\n"
+        caption = (
+            f"🆔 **ID:** `{char_id}`\n"
+            f"📛 **Name:** {char_name}\n"
+            f"🌟 **Rarity:** {char_rarity}\n"
+            f"💰 **Price:** {char_price} coins\n"
+            f"To buy, use: `/buy {char_id}`"
+        )
 
-        buttons.append(InlineKeyboardButton(f"Buy {char_name}", callback_data=f"buy_{char_id}"))
+        if char_image and char_image.startswith("http"):
+            await update.message.reply_photo(photo=char_image, caption=caption)  # ✅ Send image with details
+        else:
+            await update.message.reply_text(caption + "\n⚠️ *No image available.*")  # ✅ Send text with warning
 
-    reply_markup = InlineKeyboardMarkup([buttons])  # ✅ Fix: All buttons in a single row
-    await update.message.reply_text(message_text, reply_markup=reply_markup)
-
-# ✅ Buy Function
-async def buy(update, context, character_id):
+# ✅ Buy Function (Handles Purchase)
+async def buy(update: Update, context: CallbackContext):
     user_id = update.effective_user.id
+    args = context.args
+
+    if not args:
+        await update.message.reply_text("Usage: `/buy <waifu_id>`")
+        return
+
+    character_id = args[0]
 
     # ✅ Fetch character details from store
     character = await collection.find_one({'id': character_id})
@@ -76,7 +85,7 @@ async def buy(update, context, character_id):
     character_name = character.get('name', 'Unknown Character')
 
     # ✅ Send purchase success message with image
-    if character_img_url:
+    if character_img_url and character_img_url.startswith("http"):
         await update.message.reply_photo(
             photo=character_img_url,
             caption=f"🎉 **Purchase Successful!** 🎉\n\n"
@@ -95,18 +104,9 @@ async def buy(update, context, character_id):
             f"⚠️ No image available for this character."
         )
 
-# ✅ Handle Button Clicks
-async def handle_button_click(update, context):
-    query = update.callback_query
-    data = query.data
-
-    if data.startswith("buy_"):
-        character_id = data.split("_")[1]  # Extract character ID
-        await buy(update, context, character_id)  # ✅ Fix: Pass character_id directly
-
 # ✅ Add Handlers
 shop_handler = CommandHandler("shop", shop, block=False)
-callback_handler = CallbackQueryHandler(handle_button_click)
+buy_handler = CommandHandler("buy", buy, block=False)
 
 application.add_handler(shop_handler)
-application.add_handler(callback_handler)
+application.add_handler(buy_handler)
