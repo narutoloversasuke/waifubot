@@ -1,6 +1,6 @@
 from telegram.ext import CommandHandler
 from shivu import collection, user_collection, application
-from telegram import InlineKeyboardMarkup, InlineKeyboardButton
+from telegram import InputMediaPhoto
 
 # 🛒 SHOP SYSTEM
 async def shop(update, context):
@@ -20,7 +20,7 @@ async def shop(update, context):
 shop_handler = CommandHandler("shop", shop, block=False)
 application.add_handler(shop_handler)
 
-# 💸 BUY SYSTEM
+# 💸 BUY SYSTEM (Now With Image!)
 async def buy(update, context):
     user_id = update.effective_user.id
 
@@ -69,10 +69,14 @@ async def buy(update, context):
         {'$push': {'characters': character}, '$inc': {'balance': -price}}
     )
 
-    await update.message.reply_text(
-        f'🎉 **Success!** You have purchased **{character["name"]}** for Ŧ{price} 💸',
-        parse_mode="Markdown"
-    )
+    # 🖼 Character Image
+    character_image = character.get('image_url', None)  # Check if image exists
+    success_message = f'🎉 **Success!** You have purchased **{character["name"]}** for Ŧ{price} 💸'
+
+    if character_image:
+        await update.message.reply_photo(photo=character_image, caption=success_message, parse_mode="Markdown")
+    else:
+        await update.message.reply_text(success_message, parse_mode="Markdown")
 
 buy_handler = CommandHandler("buy", buy, block=False)
 application.add_handler(buy_handler)
