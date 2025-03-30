@@ -17,12 +17,12 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 # Constants for button labels and URLs
-ADD_BUTTON_TEXT = "ADD ME"
-ADD_BUTTON_URL = "http://t.me/Waifu_Chan_Robot?startgroup=new"
-SUPPORT_BUTTON_TEXT = "SUPPORT"
-UPDATE_BUTTON_TEXT = "UPDATES"
-HELP_BUTTON_TEXT = "HELP"
-SOURCE_BUTTON_TEXT = "SOURCE"
+SUMMON_BUTTON_TEXT = "🌸 𝒮𝓊𝓂𝓂𝑜𝓃 𝒴𝑜𝓊𝓇 𝒲𝒶𝒾𝒻𝓊! 💖"
+SUMMON_BUTTON_URL = "http://t.me/Waifu_Chan_Robot?startgroup=new"
+SUPPORT_BUTTON_TEXT = "🆘 𝒮𝓊𝓅𝓅𝑜𝓇𝓉 𝒢𝒸"
+UPDATE_BUTTON_TEXT = "🔔 𝒰𝓅𝒹𝒶𝓉𝑒𝓈"
+HELP_BUTTON_TEXT = "📜 𝐻𝑒𝓁𝓅"
+SOURCE_BUTTON_TEXT = "💻 𝒮𝑜𝓊𝓇𝒸𝑒 𝒞𝑜𝒹𝑒"
 
 # Welcome Note
 START_CAPTION = """╔═════════════════════ஓ๑♡๑ஓ═════════════════════╗  
@@ -44,16 +44,17 @@ START_CAPTION = """╔═══════════════════�
 
 GROUP_CAPTION = "Hello, darling! ✨ I'm wide awake and ready to serve! How can I make your day sweeter? 💕"
 
-HELP_TEXT = """*Help Section:*
-*/guess* - To guess a character (works in groups only)
-*/fav* - Add your favorite character
-*/trade* - Trade characters
-*/gift* - Give a character from your collection to another user (works in groups only)
-*/collection* - View your collection
-*/topgroups* - See the top groups where people guess the most
-*/top* - View top users
-*/ctop* - Your chat's top users
-*/changetime* - Change character appearance time (works in groups only)"""
+
+HELP_TEXT = """*📜 Help Section:*
+🔹 */guess* - Guess a character (groups only)
+🔹 */fav* - Add your favorite waifu
+🔹 */trade* - Trade waifus
+🔹 */gift* - Gift a waifu (groups only)
+🔹 */collection* - View your collection
+🔹 */topgroups* - See top active waifu groups
+🔹 */top* - View top waifu collectors
+🔹 */ctop* - Your chat's top waifu fans
+🔹 */changetime* - Adjust waifu drop time (groups only)"""
 
 async def start(update: Update, context: CallbackContext) -> None:
     """Send a welcome message when the command /start is issued."""
@@ -74,7 +75,7 @@ async def start(update: Update, context: CallbackContext) -> None:
             if GROUP_ID:
                 await context.bot.send_message(
                     chat_id=GROUP_ID,
-                    text=f"New user Started The Bot..\n User: <a href='tg://user?id={user_id}'>{escape(first_name)}</a>",
+                    text=f"🌟 New user joined!\n👤 User: <a href='tg://user?id={user_id}'>{escape(first_name)}</a>",
                     parse_mode='HTML'
                 )
         else:
@@ -86,7 +87,7 @@ async def start(update: Update, context: CallbackContext) -> None:
 
         # Create keyboard
         keyboard = [
-            [InlineKeyboardButton(ADD_BUTTON_TEXT, url=ADD_BUTTON_URL)],
+            [InlineKeyboardButton(SUMMON_BUTTON_TEXT, url=SUMMON_BUTTON_URL)],
             [
                 InlineKeyboardButton(SUPPORT_BUTTON_TEXT, url="https://t.me/+ZTeO__YsQoIwNTVl"),
                 InlineKeyboardButton(UPDATE_BUTTON_TEXT, url="https://t.me/Anime_P_F_P")
@@ -118,7 +119,7 @@ async def start(update: Update, context: CallbackContext) -> None:
         if update.effective_chat.type == "private":
             await context.bot.send_message(
                 chat_id=update.effective_chat.id,
-                text="Sorry, something went wrong. Please try again later."
+                text="❌ Something went wrong! Please try again later."
             )
 
 async def button(update: Update, context: CallbackContext) -> None:
@@ -128,7 +129,7 @@ async def button(update: Update, context: CallbackContext) -> None:
 
     try:
         if query.data == 'help':
-            help_keyboard = [[InlineKeyboardButton("⤾ Back", callback_data='back')]]
+            help_keyboard = [[InlineKeyboardButton("⤾ 𝔹𝕒𝕔𝕜", callback_data='back')]]
             reply_markup = InlineKeyboardMarkup(help_keyboard)
 
             await query.edit_message_caption(
@@ -139,7 +140,7 @@ async def button(update: Update, context: CallbackContext) -> None:
 
         elif query.data == 'back':
             keyboard = [
-                [InlineKeyboardButton(ADD_BUTTON_TEXT, url=ADD_BUTTON_URL)],
+                [InlineKeyboardButton(SUMMON_BUTTON_TEXT, url=SUMMON_BUTTON_URL)],
                 [
                     InlineKeyboardButton(SUPPORT_BUTTON_TEXT, url="https://t.me/+ZTeO__YsQoIwNTVl"),
                     InlineKeyboardButton(UPDATE_BUTTON_TEXT, url="https://t.me/Anime_P_F_P")
@@ -157,7 +158,7 @@ async def button(update: Update, context: CallbackContext) -> None:
 
     except Exception as e:
         logger.error(f"Error in button handler: {e}")
-        await query.edit_message_text(text="Sorry, something went wrong. Please try again.")
+        await query.edit_message_text(text="❌ Oops! Something went wrong.")
 
 # Add handlers
 application.add_handler(CallbackQueryHandler(button, pattern='^help$|^back$', block=False))
