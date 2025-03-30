@@ -27,13 +27,13 @@ rarity_map = {
 }
 
 rarity_chances = {
-    "⚪ Common": 50,  # 50% chance
-    "🟣 Rare": 25,  # 25% chance
-    "🟢 Medium": 12,  # 12% chance
-    "🟡 Legendary": 6,  # 6% chance
-    "💮 Special Edition": 4,  # 4% chance
-    "🔮 Limited Edition": 2,  # 2% chance
-    "🎐 Celestial Beauty": 1,  # 1% chance
+    "⚪ Common": 5,  # 50% chance
+    "🟣 Rare": 20,  # 25% chance
+    "🟢 Medium": 30,  # 12% chance
+    "🟡 Legendary": 20,  # 6% chance
+    "💮 Special Edition": 16,  # 4% chance
+    "🔮 Limited Edition": 10,  # 2% chance
+    "🎐 Celestial Beauty": 9,  # 1% chance
 }
 
 async def claim_toggle(claim_state):
