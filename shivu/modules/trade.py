@@ -2,9 +2,13 @@ from pyrogram import filters
 from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from shivu import user_collection, shivuu
 
-pending_trades = {}
-pending_gifts = {}
-
+pending_gifts = {}          
+pending_trades = {}         
+locked_users = set()        
+locked_characters = set()   
+cooldowns = {}              
+active_buttons = {}        
+lock = set()
 
 ### ✅ `/trade` Command (Character Exchange)
 @shivuu.on_message(filters.command("trade"))
