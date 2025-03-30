@@ -32,16 +32,15 @@ async def sell(update, context):
 
     # Determine the coin value based on the rarity of the character
     rarity_coin_mapping = {
-       "🟢 Common": 20000,
-        "🔵 Medium": 40000,
-        "🟠 Rare": 80000,
-        "🟡 Legendary": 15000,
-        "🪽 celestial": 200000,
-        "💮 Exclusive": 30000,
-        "🥴 Spacial": 400000,
-        "💎 Premium": 60000000,
-        "🔮 Limited": 2000000,
+        "⚪ Common": 20000,
+        "🟣 Normal": 40000,
+        "🔵 Medium": 20000,
+        "🟡 Legendary": 40000,
+        "💮 Special Edition": 100000,
+        "🔮 Limited Edition": 200000,
+        "🎐 Celestial Beauty": 300000, 
     }
+        
 
     rarity = character.get('rarity', 'Unknown Rarity')
     coin_value = rarity_coin_mapping.get(rarity, 0)
