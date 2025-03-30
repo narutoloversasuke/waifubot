@@ -14,26 +14,34 @@ async def upscale_image(client, message):
     progress = await message.reply("⏳ **Nyaa~! Fetching your kawaii image...** 🐾💖")
     
     # Image download
-    image = await client.download_media(reply.photo.file_id)
-    await progress.edit("🔄 **Uploading for magic upscaling...** ✨🌸")
+    try:
+        image = await client.download_media(reply.photo.file_id)
+        await progress.edit("🔄 **Uploading for magic upscaling...** ✨🌸")
+    except Exception as e:
+        await progress.edit(f"❌ **Failed to download image**: `{str(e)}` 😿💔")
+        return
     
     # Encode image in base64
-    with open(image, "rb") as f:
-        encoded = base64.b64encode(f.read()).decode("utf-8")
+    try:
+        with open(image, "rb") as f:
+            encoded = base64.b64encode(f.read()).decode("utf-8")
+    except Exception as e:
+        await progress.edit(f"❌ **Failed to encode image**: `{str(e)}` 😿💔")
+        return
     
     # Send request to API
     await progress.edit("📥 **Wait a bit nya~! Fetching your HD waifu...** 🎀💞")
     try:
-        # API Request to upscale the image
         async with aiohttp.ClientSession() as s:
             async with s.post("https://lexica.qewertyy.dev/upscale", data={"image_data": encoded}) as r:
                 if r.status != 200:
-                    await progress.edit("❌ **Oopsie! The magic failed~! Try again later, okay?** 😿💔")
+                    await progress.edit(f"❌ **API error**: `{r.status}` 😿💔")
                     return
+                upscaled_image_data = await r.read()
                 
-                # Use a temporary file to save the upscaled image
+                # Save the upscaled image in a temporary file
                 with tempfile.NamedTemporaryFile(delete=False, suffix=".png") as out:
-                    out.write(await r.read())
+                    out.write(upscaled_image_data)
                     upscaled_image_path = out.name
 
         # Send upscaled image
@@ -55,4 +63,4 @@ async def upscale_image(client, message):
         os.remove(upscaled_image_path)  # Remove the upscaled image
 
     except Exception as e:
-        await progress.edit(f"❌ **Nyaa~! Error:** `{str(e)}` 😿💔")
+        await progress.edit(f"❌ **Nyaa~! Error during upscaling process:** `{str(e)}` 😿💔")
