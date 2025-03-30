@@ -12,7 +12,19 @@ img_url character-name anime-name rarity-number
 
 use rarity number accordingly rarity Map
 
-rarity_map = 1 (⚪️ Common), 2 (🟣 Rare) , 3 (🟡 Legendary), 4 (🟢 Medium)"""
+
+rarity_map = {
+1: "⚪ Common",
+2: "🟣 Rare",
+3: "🟢 Medium",
+4: "🟡 Legendary",
+5: "💮 Special Edition",
+6: "🔮 Limited Edition",
+7: "🎐 Celestial Beauty",
+8: "🕊️ Divine Edition",
+9: "💦 Wet Elegance",
+10: "🎴 Cosplay"
+}
 
 
 
@@ -48,8 +60,19 @@ async def upload(update: Update, context: CallbackContext) -> None:
             await update.message.reply_text('Invalid URL.')
             return
 
-        rarity_map = {1: "⚪ Common", 2: "🟣 Rare", 3: "🟡 Legendary", 4: "🟢 Medium"}
-        try:
+              rarity_map = {
+1: "⚪ Common",
+2: "🟣 Rare",
+3: "🟢 Medium",
+4: "🟡 Legendary",
+5: "💮 Special Edition",
+6: "🔮 Limited Edition",
+7: "🎐 Celestial Beauty",
+8: "🕊️ Divine Edition",
+9: "💦 Wet Elegance",
+10: "🎴 Cosplay"
+}
+
             rarity = rarity_map[int(args[3])]
         except KeyError:
             await update.message.reply_text('Invalid rarity. Please use 1, 2, 3, 4, or 5.')
