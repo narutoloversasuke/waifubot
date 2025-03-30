@@ -12,8 +12,8 @@ DEVS = (6087651372)  # Developer user IDs
 SUPPORT_CHAT_ID = -1002236898779  # Updated Group Chat ID
 
 keyboard = InlineKeyboardMarkup([
-    [InlineKeyboardButton("Join Chat To Use Me", url="https://t.me/Anime_P_F_P")],
-    [InlineKeyboardButton("Join Chat To Use Me", url="https://t.me/+ZTeO__YsQoIwNTVl")]
+    [InlineKeyboardButton("Join Chat To Use Me", url="https://t.me/+ZTeO__YsQoIwNTVl")],
+    [InlineKeyboardButton("Join Chat To Use Me", url="https://t.me/Anime_P_F_P")]
 ])
 
 rarity_map = {
@@ -79,7 +79,7 @@ async def claim(_, message: t.Message):
             return 
 
         if chat_id != SUPPORT_CHAT_ID:
-            return await message.reply_text("Command can only be used here: @Anime_P_F_P")
+            return await message.reply_text("Command can only be used here: 𝖮𝗍𝖺𝗄𝗎 𝖲𝗊𝗎𝖺𝖽𝖾 𝖠𝗅𝗅𝗂𝖺𝗇𝖼𝖾 ")
 
         mention = message.from_user.mention
 
