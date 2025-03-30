@@ -6,7 +6,7 @@ from shivu import application, SUPPORT_CHAT, UPDATE_CHAT, BOT_USERNAME, db, GROU
 from shivu import pm_users as collection
 import logging
 
-private = ["", "https://postimg.cc/TyvMLdjW", ""]
+private = ["https://postimg.cc/Mv52Yq9j", "https://postimg.cc/CBCSTDsc", "https://postimg.cc/471kFGXM"]
 group = ["https://postimg.cc/w3Jpz4CB", "https://postimg.cc/pmfcTGz4", "https://postimg.cc/rKdv8Nh2"]
 
 # Set up logging
