@@ -42,7 +42,8 @@ START_CAPTION = """╔═══════════════════�
 💌 **Your adventure begins now, Master!** 💌  
 🎀 **Step into the world of love, luck, and endless surprises!** 🎀"""
 
-GROUP_CAPTION = "🎴 Alive!?... Connect to me in PM for more information."
+GROUP_CAPTION = "Hello, darling! ✨ I'm wide awake and ready to serve! How can I make your day sweeter? 💕"
+
 
 HELP_TEXT = """*Help Section:*
 */guess* - To guess a character (works in groups only)
