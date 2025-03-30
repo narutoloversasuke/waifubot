@@ -87,7 +87,7 @@ async def start(update: Update, context: CallbackContext) -> None:
 
         # Create keyboard
         keyboard = [
-            [InlineKeyboardButton(ADD_BUTTON_TEXT, url=f" http://t.me/Waifu_Chan_Robot?startgroup=new)],
+            [InlineKeyboardButton(ADD_BUTTON_TEXT, url=f"http://t.me/Waifu_Chan_Robot?startgroup=new)],
             [
                 InlineKeyboardButton(SUPPORT_BUTTON_TEXT, url=f"https://t.me/+ZTeO__YsQoIwNTVl"),
                 InlineKeyboardButton(UPDATE_BUTTON_TEXT, url=f"https://t.me/Anime_P_F_P")
