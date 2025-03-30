@@ -1,24 +1,52 @@
 from pyrogram import Client, filters
 import base64
 import aiohttp
+import os
 from shivu import shivuu as app
 
 @app.on_message(filters.command("up"))
 async def upscale_image(client, message):
     if not (reply := message.reply_to_message) or not reply.photo:
-        return await message.reply("Reply to an image to upscale it.")
+        return await message.reply("⚠️ **Ara~!** Reply to a cute image to upscale it! 🥺💕")
     
-    progress = await message.reply("Upscaling your image, please wait...")
+    progress = await message.reply("⏳ **Nyaa~! Fetching your kawaii image...** 🐾💖")
     
+    # Image download
     image = await client.download_media(reply.photo.file_id)
+    await progress.edit("🔄 **Uploading for magic upscaling...** ✨🌸")
     
+    # Encode image in base64
     with open(image, "rb") as f:
         encoded = base64.b64encode(f.read()).decode("utf-8")
     
-    async with aiohttp.ClientSession() as s:
-        async with s.post("https://lexica.qewertyy.dev/upscale", data={"image_data": encoded}) as r:
-            with open("upscaled_image.png", "wb") as out:
-                out.write(await r.read())
-    
-    await progress.delete()
-    await message.reply_photo("upscaled_image.png", caption=f"**Upscaled by @{client.me.username}**")
+    # Send request to API
+    await progress.edit("📥 **Wait a bit nya~! Fetching your HD waifu...** 🎀💞")
+    try:
+        async with aiohttp.ClientSession() as s:
+            async with s.post("https://lexica.qewertyy.dev/upscale", data={"image_data": encoded}) as r:
+                if r.status != 200:
+                    await progress.edit("❌ **Oopsie! The magic failed~! Try again later, okay?** 😿💔")
+                    return
+                with open("upscaled_image.png", "wb") as out:
+                    out.write(await r.read())
+        
+        # Send image
+        await progress.delete()
+        sent = await message.reply_document(
+            "upscaled_image.png", 
+            caption=f"✨ **Upscaled by @{client.me.username} ~nya!** 🐾💕"
+        )
+        
+        # Generate direct download link
+        file_link = f"https://t.me/{client.me.username}?start={sent.document.file_id}"
+        await message.reply(
+            f"🎀 **Tadaaa~! Your kawaii image is ready!** ✨\n📎 [Click here to download](<{file_link}>) 💖", 
+            disable_web_page_preview=True
+        )
+
+        # Cleanup
+        os.remove("upscaled_image.png")
+        os.remove(image)
+
+    except Exception as e:
+        await progress.edit(f"❌ **Nyaa~! Error:** `{str(e)}` 😿💔")
