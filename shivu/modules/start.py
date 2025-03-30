@@ -18,7 +18,7 @@ logger = logging.getLogger(__name__)
 
 # Constants for button labels and URLs
 ADD_BUTTON_TEXT = "ADD ME"
-ADD_BUTTON_URL = f'http://t.me/Madara_Husbando_grabber_Bot?startgroup=new'
+ADD_BUTTON_URL = "http://t.me/Waifu_Chan_Robot?startgroup=new"
 SUPPORT_BUTTON_TEXT = "SUPPORT"
 UPDATE_BUTTON_TEXT = "UPDATES"
 HELP_BUTTON_TEXT = "HELP"
@@ -43,7 +43,6 @@ START_CAPTION = """╔═══════════════════�
 🎀 **Step into the world of love, luck, and endless surprises!** 🎀"""
 
 GROUP_CAPTION = "Hello, darling! ✨ I'm wide awake and ready to serve! How can I make your day sweeter? 💕"
-
 
 HELP_TEXT = """*Help Section:*
 */guess* - To guess a character (works in groups only)
@@ -87,13 +86,13 @@ async def start(update: Update, context: CallbackContext) -> None:
 
         # Create keyboard
         keyboard = [
-            [InlineKeyboardButton(ADD_BUTTON_TEXT, url=f"http://t.me/Waifu_Chan_Robot?startgroup=new)],
+            [InlineKeyboardButton(ADD_BUTTON_TEXT, url=ADD_BUTTON_URL)],
             [
-                InlineKeyboardButton(SUPPORT_BUTTON_TEXT, url=f"https://t.me/+ZTeO__YsQoIwNTVl"),
-                InlineKeyboardButton(UPDATE_BUTTON_TEXT, url=f"https://t.me/Anime_P_F_P")
+                InlineKeyboardButton(SUPPORT_BUTTON_TEXT, url="https://t.me/+ZTeO__YsQoIwNTVl"),
+                InlineKeyboardButton(UPDATE_BUTTON_TEXT, url="https://t.me/Anime_P_F_P")
             ],
             [InlineKeyboardButton(HELP_BUTTON_TEXT, callback_data='help')],
-            [InlineKeyboardButton(SOURCE_BUTTON_TEXT, url=f"http://postimg.cc/bsFFs4YF")]
+            [InlineKeyboardButton(SOURCE_BUTTON_TEXT, url="http://postimg.cc/bsFFs4YF")]
         ]
         reply_markup = InlineKeyboardMarkup(keyboard)
 
@@ -142,11 +141,11 @@ async def button(update: Update, context: CallbackContext) -> None:
             keyboard = [
                 [InlineKeyboardButton(ADD_BUTTON_TEXT, url=ADD_BUTTON_URL)],
                 [
-                    InlineKeyboardButton(SUPPORT_BUTTON_TEXT, url=f"https://t.me/+ZTeO__YsQoIwNTVl"),
-                    InlineKeyboardButton(UPDATE_BUTTON_TEXT, url=f"https://t.me/Anime_P_F_P")
+                    InlineKeyboardButton(SUPPORT_BUTTON_TEXT, url="https://t.me/+ZTeO__YsQoIwNTVl"),
+                    InlineKeyboardButton(UPDATE_BUTTON_TEXT, url="https://t.me/Anime_P_F_P")
                 ],
                 [InlineKeyboardButton(HELP_BUTTON_TEXT, callback_data='help')],
-                [InlineKeyboardButton(SOURCE_BUTTON_TEXT, url=f"http://postimg.cc/bsFFs4YF")]
+                [InlineKeyboardButton(SOURCE_BUTTON_TEXT, url="http://postimg.cc/bsFFs4YF")]
             ]
             reply_markup = InlineKeyboardMarkup(keyboard)
 
