@@ -9,7 +9,7 @@ import logging
 private = ["https://postimg.cc/Mv52Yq9j", "https://postimg.cc/CBCSTDsc", "https://postimg.cc/471kFGXM"]
 group = ["https://postimg.cc/w3Jpz4CB", "https://postimg.cc/pmfcTGz4", "https://postimg.cc/rKdv8Nh2"]
 
-Set up logging
+#Set up logging
 
 logging.basicConfig(
 format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
