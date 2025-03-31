@@ -140,7 +140,7 @@ async def grasp(update: Update, context: CallbackContext) -> None:
 
         await update.message.reply_text(  
             f'🎉 **Congrats! You have successfully added {last_characters[chat_id]["name"]} to your collection!** 💖' 
-💎 **Rarity:** {last_characters[chat_id]["rarity"]}  
+ **Rarity:** {last_characters[chat_id]["rarity"]}  
 -----------------------------------  
 ✨ **Want to grow your waifu collection? Keep playing!**  
 ',  
