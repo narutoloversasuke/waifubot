@@ -87,7 +87,12 @@ async def send_image(update: Update, context: CallbackContext) -> None:
     await context.bot.send_photo(  
         chat_id=chat_id,  
         photo=character['img_url'],  
-        caption=f"""A New {character['rarity']} Character Appeared...\n/grasp Character Name and add in Your Harem""",  
+        caption=f"""✨ A New Waifu Has Entered Your World! ✨  
+💖 **Waifu Name:** {character['name']}  
+💎 **Rarity:** {character['rarity']}  
+-----------------------------------  
+⚡ **Use `/grasp <name>` to add her to your waifu collection!**  
+""",  
         parse_mode='Markdown'  
     )
 
@@ -99,13 +104,13 @@ async def grasp(update: Update, context: CallbackContext) -> None:
         return  
 
     if chat_id in first_correct_guesses:  
-        await update.message.reply_text(f'❌️ Already Guessed By Someone.. Try Next Time Bruhh ')  
+        await update.message.reply_text(f'❌️ Oops! This waifu was already claimed by someone else. Try next time!')  
         return  
 
     guess = ' '.join(context.args).lower() if context.args else ''  
 
     if "()" in guess or "&" in guess.lower():  
-        await update.message.reply_text("Nahh You Can't use This Types of words in your guess..❌️")  
+        await update.message.reply_text("Nahh, you can't use those words in your guess! ❌️")  
         return  
 
     name_parts = last_characters[chat_id]['name'].lower().split()  
@@ -131,42 +136,46 @@ async def grasp(update: Update, context: CallbackContext) -> None:
                 'characters': [last_characters[chat_id]],  
             })  
 
-        keyboard = [[InlineKeyboardButton(f"See Harem", switch_inline_query_current_chat=f"collection.{user_id}")]]  
+        keyboard = [[InlineKeyboardButton(f"See My Waifus", switch_inline_query_current_chat=f"collection.{user_id}")]]  
 
         await update.message.reply_text(  
-            f'📜 "Ancient runes glow as the contract is sealed… The forbidden pact is complete! {last_characters[chat_id]["name"]} is now bound within your grasp. 🔮"',  
+            f'🎉 **Congrats! You have successfully added {last_characters[chat_id]["name"]} to your collection!** 💖  
+💎 **Rarity:** {last_characters[chat_id]["rarity"]}  
+-----------------------------------  
+✨ **Want to grow your waifu collection? Keep playing!**  
+',  
             parse_mode='HTML', reply_markup=InlineKeyboardMarkup(keyboard)  
         )  
 
     else:  
         await update.message.reply_text(  
-            '📜 "The ancient scroll rejects this name… No such waifu exists! ❌"'  
+            '❌ **Nope! This isn’t the correct name. Try again!** 😔'  
         )
 
 async def fav(update: Update, context: CallbackContext) -> None:
     user_id = update.effective_user.id
 
     if not context.args:  
-        await update.message.reply_text('Please provide Character id...')  
+        await update.message.reply_text('💬 **Please provide the character ID you want to add to your favorites...**')  
         return  
 
     character_id = context.args[0]  
 
     user = await user_collection.find_one({'id': user_id})  
     if not user:  
-        await update.message.reply_text('You have not guessed any characters yet....')  
+        await update.message.reply_text('❌ **You don’t have any waifus in your collection yet.**')  
         return  
 
     character = next((c for c in user['characters'] if c['id'] == character_id), None)  
     if not character:  
-        await update.message.reply_text('This Character is Not In your collection')  
+        await update.message.reply_text('❌ **This waifu is not in your collection yet.**')  
         return  
 
     user['favorites'] = [character_id]  
 
     await user_collection.update_one({'id': user_id}, {'$set': {'favorites': user['favorites']}})  
 
-    await update.message.reply_text(f'Character {character["name"]} has been added to your favorite...')
+    await update.message.reply_text(f'💖 **{character["name"]} has been added to your favorites!**')
 
 def main() -> None:
     """Run bot."""
