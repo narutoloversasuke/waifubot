@@ -83,7 +83,7 @@ async def claim(_, message: t.Message):
 
         mention = message.from_user.mention
 
-        claim_state = await get_claim_state()
+        claim_state = await get_claim_state(True)
         if claim_state == "False":
             return await message.reply_text("Claiming feature is currently disabled.")
 
