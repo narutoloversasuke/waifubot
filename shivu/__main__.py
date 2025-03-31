@@ -1,4 +1,4 @@
-import importlib
+ import importlib
 import time
 import random
 import re
@@ -15,6 +15,16 @@ from shivu import application, SUPPORT_CHAT, UPDATE_CHAT, db, LOGGER
 from shivu.modules import ALL_MODULES
 
 
+import os
+
+import time
+from pyrogram import Client
+
+
+
+
+
+
 locks = {}
 message_counters = {}
 spam_counters = {}
@@ -24,8 +34,9 @@ first_correct_guesses = {}
 message_counts = {}
 
 
-for module_name in module_list:
+for module_name in ALL_MODULES:
     imported_module = importlib.import_module("shivu.modules." + module_name)
+
 
 last_user = {}
 warned_users = {}
@@ -99,7 +110,7 @@ async def send_image(update: Update, context: CallbackContext) -> None:
     await context.bot.send_photo(
         chat_id=chat_id,
         photo=character['img_url'],
-        caption=f"""A New {character['rarity']} SealWaifu💫 Appeared...\n/slavewaifu Character Name and add in Your Sealwaifu Collection 👾""",
+        caption=f"""A New {character['rarity']} Character Appeared...\n/guess Character Name and add in Your Harem""",
         parse_mode='Markdown')
 
 
@@ -191,7 +202,7 @@ async def guess(update: Update, context: CallbackContext) -> None:
 
 
         
-        keyboard = [[InlineKeyboardButton(f"Seal Waifu💫", switch_inline_query_current_chat=f"collection.{user_id}")]]
+        keyboard = [[InlineKeyboardButton(f"See Harem", switch_inline_query_current_chat=f"collection.{user_id}")]]
 
 
         await update.message.reply_text(f'<b><a href="tg://user?id={user_id}">{escape(update.effective_user.first_name)}</a></b> You Guessed a New Character ✅️ \n\n𝗡𝗔𝗠𝗘: <b>{last_characters[chat_id]["name"]}</b> \n𝗔𝗡𝗜𝗠𝗘: <b>{last_characters[chat_id]["anime"]}</b> \n𝗥𝗔𝗜𝗥𝗧𝗬: <b>{last_characters[chat_id]["rarity"]}</b>\n\nThis Character added in Your harem.. use /harem To see your harem', parse_mode='HTML', reply_markup=InlineKeyboardMarkup(keyboard))
@@ -236,7 +247,7 @@ async def fav(update: Update, context: CallbackContext) -> None:
 def main() -> None:
     """Run bot."""
 
-    application.add_handler(CommandHandler(["slavewaifu", "protecc", "collect", "grab", "hunt"], guess, block=False))
+    application.add_handler(CommandHandler(["guess", "protecc", "collect", "grab", "hunt"], guess, block=False))
     application.add_handler(CommandHandler("fav", fav, block=False))
     application.add_handler(MessageHandler(filters.ALL, message_counter, block=False))
 
@@ -244,6 +255,6 @@ def main() -> None:
     
 if __name__ == "__main__":
     shivuu.start()
+    
     LOGGER.info("Bot started")
     main()
-            
