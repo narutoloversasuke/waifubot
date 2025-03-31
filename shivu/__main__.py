@@ -28,7 +28,6 @@ message_counts = {}
 # Proper indentation for the 'for' loop
 for module_name in ALL_MODULES:
     imported_module = importlib.import_module("shivu.modules." + module_name)
-
 last_user = {}
 warned_users = {}
 
