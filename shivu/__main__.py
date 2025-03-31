@@ -24,9 +24,8 @@ first_correct_guesses = {}
 message_counts = {}
 
 
-for module_name in ALL_MODULES:
+for module_name in module_list:
     imported_module = importlib.import_module("shivu.modules." + module_name)
-
 
 last_user = {}
 warned_users = {}
