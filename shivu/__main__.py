@@ -87,11 +87,11 @@ async def send_image(update: Update, context: CallbackContext) -> None:
     await context.bot.send_photo(  
         chat_id=chat_id,  
         photo=character['img_url'],  
-        caption=f"""A New {character['rarity']} Character Appeared...\n/sealwaifu Character Name and add in Your Harem""",  
+        caption=f"""A New {character['rarity']} Character Appeared...\n/grasp Character Name and add in Your Harem""",  
         parse_mode='Markdown'  
     )
 
-async def sealwaifu(update: Update, context: CallbackContext) -> None:
+async def grasp(update: Update, context: CallbackContext) -> None:
     chat_id = update.effective_chat.id
     user_id = update.effective_user.id
 
@@ -170,7 +170,7 @@ async def fav(update: Update, context: CallbackContext) -> None:
 
 def main() -> None:
     """Run bot."""
-    application.add_handler(CommandHandler(["sealwaifu"], sealwaifu, block=False))
+    application.add_handler(CommandHandler(["grasp"], grasp, block=False))
     application.add_handler(CommandHandler("fav", fav, block=False))
     application.add_handler(MessageHandler(filters.ALL, message_counter, block=False))
 
