@@ -17,7 +17,7 @@ level=logging.INFO
 )
 logger = logging.getLogger(name)
 
-Constants for button labels and URLs
+#Constants for button labels and URLs
 
 SUMMON_BUTTON_TEXT = "🌸 𝒮𝓊𝓂𝓂𝑜𝓃 𝒴𝑜𝓊𝓇 𝒲𝒶𝒾𝒻𝓊! 💖"
 SUMMON_BUTTON_URL = "http://t.me/Waifu_Chan_Robot?startgroup=new"
@@ -26,7 +26,7 @@ UPDATE_BUTTON_TEXT = "🔔 𝒰𝓅𝒹𝒶𝓉𝑒𝓈"
 HELP_BUTTON_TEXT = "📜 𝐻𝑒𝓁𝓅"
 SOURCE_BUTTON_TEXT = "💻 𝒮𝑜𝓊𝓇𝒸𝑒 𝒞𝑜𝒹𝑒"
 
-Welcome Note
+#Welcome Note
 
 START_CAPTION = """╔═════════════════════ஓ๑♡๑ஓ═════════════════════╗
 🌸✨ Welcome, Master! ✨🌸
