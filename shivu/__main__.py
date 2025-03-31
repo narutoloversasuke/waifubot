@@ -181,5 +181,4 @@ shivuu.start()
 LOGGER.info("Bot started")  
 main()
 
-Sun isme /sealwaifu ko /grasp se replace karde
 
