@@ -5,11 +5,17 @@ import html
 from telegram import Update
 from telegram.ext import CommandHandler, CallbackContext
 
-from shivu import (application, PHOTO_URL, OWNER_ID,
-                    user_collection, top_global_groups_collection,
-                    group_user_totals_collection)
+from shivu import (application, OWNER_ID,
+                   user_collection, top_global_groups_collection,
+                   group_user_totals_collection)
 
 from shivu import sudo_users as SUDO_USERS 
+
+PHOTO_URL = [
+    "https://i.postimg.cc/H8C3P7XC/image1.jpg",
+    "https://i.postimg.cc/JGVS9sM0/image2.jpg",
+    "https://i.postimg.cc/2VDX0g7B/image3.jpg"
+]
 
 async def global_leaderboard(update: Update, context: CallbackContext) -> None:
     cursor = top_global_groups_collection.aggregate([
