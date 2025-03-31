@@ -7,7 +7,7 @@ from shivu import pm_users as collection
 import logging
 
 private = ["https://postimg.cc/Mv52Yq9j", "https://postimg.cc/CBCSTDsc", "https://postimg.cc/471kFGXM"]
-group = ["https://postimg.cc/w3Jpz4CB", "https://postimg.cc/pmfcTGz4", "https://postimg.cc/rKdv8Nh2"]
+group = ["https://postimg.cc/w3Jpz4CB", "https://postimg.cc/pmfcTGz4", "http://postimg.cc/K4DVK9jh"]
 
 # Set up logging
 logging.basicConfig(
@@ -17,38 +17,30 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 # Constants for button labels and URLs
-SUMMON_BUTTON_TEXT = "🌸 Grasp Your Waifu! 💖"
-SUMMON_BUTTON_URL = "http://t.me/Waifu_Chan_Robot?startgroup=new"
-SUPPORT_BUTTON_TEXT = "🆘 Support GC"
-UPDATE_BUTTON_TEXT = "🔔 Updates"
-HELP_BUTTON_TEXT = "📜 Help"
-SOURCE_BUTTON_TEXT = "💻 Source Code"
-MY_WAIFUS_BUTTON_TEXT = "💖 My Waifus"
+ADD_BUTTON_TEXT = "ADD ME"
+ADD_BUTTON_URL = f'http://t.me/Madara_Husbando_grabber_Bot?startgroup=new'
+SUPPORT_BUTTON_TEXT = "SUPPORT"
+UPDATE_BUTTON_TEXT = "UPDATES"
+HELP_BUTTON_TEXT = "HELP"
+SOURCE_BUTTON_TEXT = "SOURCE"
+# Better to use GitHub
 
-# Welcome Note (Isekai style)
-START_CAPTION = """╔═══════════════════ஓ๑♡๑ஓ═══════════════════╗  
-              ✨ *Summoned to Another World!* ✨  
-╚═══════════════════ஓ๑♡๑ஓ═══════════════════╝  
+# Message templates
+START_CAPTION = """*Heyyyy...* ✨
+*I am An Open Source Character Catcher Bot... Add me in your group, and I will send random characters after every 100 messages in the group. Use /guess to collect characters and check your collection with /Harem. So add me in your groups and collect your harem!*"""
 
-🌸 *Master!* Fate has chosen you! 🌸  
-💖 You have been transported to the world of waifus!  
-🎀 Here, rare beauties await your call—summon them, cherish them, and build your legendary collection!  
-💫 *Will you be the one to claim the ultimate waifu?* 💫  
+GROUP_CAPTION = "🎴 Alive!?... Connect to me in PM for more information."
 
-🔮 *Your isekai journey begins now!* 🔮"""
-
-GROUP_CAPTION = "Hello, darling! ✨ I'm wide awake and ready to serve! How can I make your day sweeter? 💕"
-
-HELP_TEXT = """*📜 Help Section:*
-🔹 */guess* - Guess a character (groups only)
-🔹 */fav* - Add your favorite waifu
-🔹 */trade* - Trade waifus
-🔹 */gift* - Gift a waifu (groups only)
-🔹 */collection* - View your collection
-🔹 */topgroups* - See top active waifu groups
-🔹 */top* - View top waifu collectors
-🔹 */ctop* - Your chat's top waifu fans
-🔹 */changetime* - Adjust waifu drop time (groups only)"""
+HELP_TEXT = """*Help Section:*
+*/guess* - To guess a character (works in groups only)
+*/fav* - Add your favorite character
+*/trade* - Trade characters
+*/gift* - Give a character from your collection to another user (works in groups only)
+*/collection* - View your collection
+*/topgroups* - See the top groups where people guess the most
+*/top* - View top users
+*/ctop* - Your chat's top users
+*/changetime* - Change character appearance time (works in groups only)"""
 
 async def start(update: Update, context: CallbackContext) -> None:
     """Send a welcome message when the command /start is issued."""
@@ -69,7 +61,7 @@ async def start(update: Update, context: CallbackContext) -> None:
             if GROUP_ID:
                 await context.bot.send_message(
                     chat_id=GROUP_ID,
-                    text=f"🌟 New user joined!\n👤 User: <a href='tg://user?id={user_id}'>{escape(first_name)}</a>",
+                    text=f"New user Started The Bot..\n User: <a href='tg://user?id={user_id}'>{escape(first_name)}</a>",
                     parse_mode='HTML'
                 )
         else:
@@ -81,16 +73,16 @@ async def start(update: Update, context: CallbackContext) -> None:
 
         # Create keyboard
         keyboard = [
-            [InlineKeyboardButton(SUMMON_BUTTON_TEXT, url=SUMMON_BUTTON_URL)],
-            [InlineKeyboardButton(MY_WAIFUS_BUTTON_TEXT, callback_data='my_waifus')],
+            [InlineKeyboardButton(ADD_BUTTON_TEXT, url=ADD_BUTTON_URL)],
             [
-                InlineKeyboardButton(SUPPORT_BUTTON_TEXT, url="https://t.me/+ZTeO__YsQoIwNTVl"),
-                InlineKeyboardButton(UPDATE_BUTTON_TEXT, url="https://t.me/Anime_P_F_P")
+                InlineKeyboardButton(SUPPORT_BUTTON_TEXT, url=f"https://t.me/+ZTeO__YsQoIwNTVl"),
+                InlineKeyboardButton(UPDATE_BUTTON_TEXT, url=f"https://t.me/Anime_P_F_P")
             ],
             [InlineKeyboardButton(HELP_BUTTON_TEXT, callback_data='help')],
-            [InlineKeyboardButton(SOURCE_BUTTON_TEXT, url="http://postimg.cc/bsFFs4YF")]
+            [InlineKeyboardButton(SOURCE_BUTTON_TEXT, url=f"http://postimg.cc/bsFFs4YF")]
         ]
         reply_markup = InlineKeyboardMarkup(keyboard)
+        
 
         # Send appropriate message based on chat type
         if update.effective_chat.type == "private":
@@ -114,7 +106,7 @@ async def start(update: Update, context: CallbackContext) -> None:
         if update.effective_chat.type == "private":
             await context.bot.send_message(
                 chat_id=update.effective_chat.id,
-                text="❌ Something went wrong! Please try again later."
+                text="Sorry, something went wrong. Please try again later."
             )
 
 async def button(update: Update, context: CallbackContext) -> None:
@@ -133,22 +125,15 @@ async def button(update: Update, context: CallbackContext) -> None:
                 parse_mode='markdown'
             )
 
-        elif query.data == 'my_waifus':
-            await query.edit_message_text(
-                text="📖 *Your Waifu Collection:* \n\n🔹 View and cherish the waifus you have grasped!",
-                parse_mode='markdown'
-            )
-
         elif query.data == 'back':
             keyboard = [
-                [InlineKeyboardButton(SUMMON_BUTTON_TEXT, url=SUMMON_BUTTON_URL)],
-                [InlineKeyboardButton(MY_WAIFUS_BUTTON_TEXT, callback_data='my_waifus')],
+                [InlineKeyboardButton(ADD_BUTTON_TEXT, url=ADD_BUTTON_URL)],
                 [
-                    InlineKeyboardButton(SUPPORT_BUTTON_TEXT, url="https://t.me/+ZTeO__YsQoIwNTVl"),
-                    InlineKeyboardButton(UPDATE_BUTTON_TEXT, url="https://t.me/Anime_P_F_P")
+                    InlineKeyboardButton(SUPPORT_BUTTON_TEXT, url=f"https://t.me/+ZTeO__YsQoIwNTVl"),
+                    InlineKeyboardButton(UPDATE_BUTTON_TEXT, url=f"https://t.me/Anime_P_F_P")
                 ],
                 [InlineKeyboardButton(HELP_BUTTON_TEXT, callback_data='help')],
-                [InlineKeyboardButton(SOURCE_BUTTON_TEXT, url="http://postimg.cc/bsFFs4YF")]
+                [InlineKeyboardButton(SOURCE_BUTTON_TEXT, url=f"http://postimg.cc/bsFFs4YF")]
             ]
             reply_markup = InlineKeyboardMarkup(keyboard)
 
@@ -160,8 +145,8 @@ async def button(update: Update, context: CallbackContext) -> None:
 
     except Exception as e:
         logger.error(f"Error in button handler: {e}")
-        await query.edit_message_text(text="❌ Oops! Something went wrong.")
+        await query.edit_message_text(text="Sorry, something went wrong. Please try again.")
 
 # Add handlers
-application.add_handler(CallbackQueryHandler(button, pattern='^help$|^back$|^my_waifus$', block=False))
+application.add_handler(CallbackQueryHandler(button, pattern='^help$|^back$', block=False))
 application.add_handler(CommandHandler('start', start, block=False))
