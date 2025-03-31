@@ -2,10 +2,11 @@ from telegram.ext import CommandHandler
 from shivu import collection, user_collection, application
 from telegram import InputMediaPhoto
 
-# 🛒 SHOP SYSTEM
+# 🛒 SHOP SYSTEM (Now with Image!)
 async def shop(update, context):
     shop_message = (
-        "🛒 **Waifu Shop** 🛒\n\n"
+        "🌸 **Welcome to the Waifu Shop!** 🌸\n\n"
+        "🔹 **Available Waifus:**\n"
         "⚪ Common: Ŧ2,000,000 💸\n"
         "🟣 Normal: Ŧ4,000,000 💸\n"
         "🔵 Medium: Ŧ8,000,000 💸\n"
@@ -13,9 +14,13 @@ async def shop(update, context):
         "💮 Special Edition: Ŧ20,000,000 💸\n"
         "🔮 Limited Edition: Ŧ300,000,000 💸\n"
         "🎐 Celestial Beauty: Ŧ4,000,000,000 💸\n\n"
+        "✨ **Only the worthy can claim the rarest waifus!** ✨\n"
         "👉 **To Buy a Waifu, use:** `/buy <pick_id>`"
     )
-    await update.message.reply_text(shop_message, parse_mode="Markdown")
+
+    shop_image = "https://postimg.cc/GBkNSQVq"  # Shop Banner Image
+
+    await update.message.reply_photo(photo=shop_image, caption=shop_message, parse_mode="Markdown")
 
 shop_handler = CommandHandler("shop", shop, block=False)
 application.add_handler(shop_handler)
