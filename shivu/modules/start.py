@@ -17,33 +17,27 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 # Constants for button labels and URLs
-SUMMON_BUTTON_TEXT = "🌸 𝒮𝓊𝓂𝓂𝑜𝓃 𝒴𝑜𝓊𝓇 𝒲𝒶𝒾𝒻𝓊! 💖"
+SUMMON_BUTTON_TEXT = "🌸 Grasp Your Waifu! 💖"
 SUMMON_BUTTON_URL = "http://t.me/Waifu_Chan_Robot?startgroup=new"
-SUPPORT_BUTTON_TEXT = "🆘 𝒮𝓊𝓅𝓅𝑜𝓇𝓉 𝒢𝒸"
-UPDATE_BUTTON_TEXT = "🔔 𝒰𝓅𝒹𝒶𝓉𝑒𝓈"
-HELP_BUTTON_TEXT = "📜 𝐻𝑒𝓁𝓅"
-SOURCE_BUTTON_TEXT = "💻 𝒮𝑜𝓊𝓇𝒸𝑒 𝒞𝑜𝒹𝑒"
+SUPPORT_BUTTON_TEXT = "🆘 Support GC"
+UPDATE_BUTTON_TEXT = "🔔 Updates"
+HELP_BUTTON_TEXT = "📜 Help"
+SOURCE_BUTTON_TEXT = "💻 Source Code"
+MY_WAIFUS_BUTTON_TEXT = "💖 My Waifus"
 
-# Welcome Note
-START_CAPTION = """╔═════════════════════ஓ๑♡๑ஓ═════════════════════╗  
-               🌸✨ **Welcome, Master!** ✨🌸  
-╚═════════════════════ஓ๑♡๑ஓ═════════════════════╝  
+# Welcome Note (Isekai style)
+START_CAPTION = """╔═══════════════════ஓ๑♡๑ஓ═══════════════════╗  
+              ✨ *Summoned to Another World!* ✨  
+╚═══════════════════ஓ๑♡๑ஓ═══════════════════╝  
 
-🌸 **A world of waifus awaits you!** 🌸  
-❥ Collect, cherish, and trade your favorite waifus! 💖  
-❥ Unlock rare beauties and build the **ultimate collection**! ✨  
-❥ Who knows? **Your dream waifu** might be waiting just for you! 💫  
+🌸 *Master!* Fate has chosen you! 🌸  
+💖 You have been transported to the world of waifus!  
+🎀 Here, rare beauties await your call—summon them, cherish them, and build your legendary collection!  
+💫 *Will you be the one to claim the ultimate waifu?* 💫  
 
-╭───────────────────🌸───────────────────╮  
-        💕 **Every waifu has a story...** 💕  
-     🎀 **Will you be the one to claim her heart?** 🎀  
-╰───────────────────🌸───────────────────╯  
-
-💌 **Your adventure begins now, Master!** 💌  
-🎀 **Step into the world of love, luck, and endless surprises!** 🎀"""
+🔮 *Your isekai journey begins now!* 🔮"""
 
 GROUP_CAPTION = "Hello, darling! ✨ I'm wide awake and ready to serve! How can I make your day sweeter? 💕"
-
 
 HELP_TEXT = """*📜 Help Section:*
 🔹 */guess* - Guess a character (groups only)
@@ -88,6 +82,7 @@ async def start(update: Update, context: CallbackContext) -> None:
         # Create keyboard
         keyboard = [
             [InlineKeyboardButton(SUMMON_BUTTON_TEXT, url=SUMMON_BUTTON_URL)],
+            [InlineKeyboardButton(MY_WAIFUS_BUTTON_TEXT, callback_data='my_waifus')],
             [
                 InlineKeyboardButton(SUPPORT_BUTTON_TEXT, url="https://t.me/+ZTeO__YsQoIwNTVl"),
                 InlineKeyboardButton(UPDATE_BUTTON_TEXT, url="https://t.me/Anime_P_F_P")
@@ -129,7 +124,7 @@ async def button(update: Update, context: CallbackContext) -> None:
 
     try:
         if query.data == 'help':
-            help_keyboard = [[InlineKeyboardButton("⤾ 𝔹𝕒𝕔𝕜", callback_data='back')]]
+            help_keyboard = [[InlineKeyboardButton("⤾ Back", callback_data='back')]]
             reply_markup = InlineKeyboardMarkup(help_keyboard)
 
             await query.edit_message_caption(
@@ -138,9 +133,16 @@ async def button(update: Update, context: CallbackContext) -> None:
                 parse_mode='markdown'
             )
 
+        elif query.data == 'my_waifus':
+            await query.edit_message_text(
+                text="📖 *Your Waifu Collection:* \n\n🔹 View and cherish the waifus you have grasped!",
+                parse_mode='markdown'
+            )
+
         elif query.data == 'back':
             keyboard = [
                 [InlineKeyboardButton(SUMMON_BUTTON_TEXT, url=SUMMON_BUTTON_URL)],
+                [InlineKeyboardButton(MY_WAIFUS_BUTTON_TEXT, callback_data='my_waifus')],
                 [
                     InlineKeyboardButton(SUPPORT_BUTTON_TEXT, url="https://t.me/+ZTeO__YsQoIwNTVl"),
                     InlineKeyboardButton(UPDATE_BUTTON_TEXT, url="https://t.me/Anime_P_F_P")
@@ -161,5 +163,5 @@ async def button(update: Update, context: CallbackContext) -> None:
         await query.edit_message_text(text="❌ Oops! Something went wrong.")
 
 # Add handlers
-application.add_handler(CallbackQueryHandler(button, pattern='^help$|^back$', block=False))
+application.add_handler(CallbackQueryHandler(button, pattern='^help$|^back$|^my_waifus$', block=False))
 application.add_handler(CommandHandler('start', start, block=False))
