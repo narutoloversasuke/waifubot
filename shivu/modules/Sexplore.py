@@ -7,7 +7,29 @@ from shivu import application, user_collection
 COOLDOWN_DURATION = 30  # Cooldown in seconds
 user_cooldowns = {}
 
-IMAGE_URL = "https://postimg.cc/xJKjGvKn"  # Adventure Image
+IMAGE_URL = "https://postimg.cc/xJKjGvKn"  # Change if not loading
+
+EXPLORATION_MESSAGES = [
+    "🔍 *You wander into the unknown...*\n🕵️ Searching for hidden treasures...",
+    "🌲 *You step into a dark forest...* 🌙 Strange sounds echo around you...",
+    "🌀 *A mysterious portal appears!* 🌌 Do you enter? There's no turning back...",
+    "🏰 *A ruined castle looms in the distance...* You decide to explore its halls...",
+    "🌊 *A hidden cave beneath the ocean...* 🌊 You dive deep into the abyss..."
+]
+
+WIN_MESSAGES = [
+    "✨ *Your waifu guided you through the shadows...* 🌙\n🎭 You uncovered *a legendary hidden treasure*! 🏆\n💰 **Reward:** `{}` Tokens! 🎉",
+    "💎 *You discovered a chest filled with sparkling gems!* 💰\n🎉 **Jackpot:** `{}` Tokens!",
+    "🦄 *A mystical creature blessed you!* 🏆\n💰 **You gained:** `{}` Tokens!",
+    "📜 *You solved an ancient riddle and found a fortune!* 🎊\n💰 **Collected:** `{}` Tokens!"
+]
+
+LOSS_MESSAGES = [
+    "💀 *Trapped in a cursed labyrinth...* 🕸️\n⚠ Your waifu tried to warn you, but it was *too late*! 😱\n🩸 You barely escaped with `{}` Tokens… and a heart full of regret.",
+    "🐍 *A venomous beast ambushed you!* 😨\n💸 You lost most of your energy but managed to escape with `{}` Tokens...",
+    "🔥 *A hidden trap was triggered!* 🚷\nYou barely survived, escaping with `{}` Tokens...",
+    "🧛‍♂️ *You were caught by a mysterious entity!* 😵\nWith great effort, you fled, holding onto `{}` Tokens."
+]
 
 async def explore(update, context):
     if update.message.chat.type == "private":
@@ -40,8 +62,7 @@ async def explore(update, context):
 
     # **Step 1: Send "Exploring..." Message**
     exploring_message = await update.message.reply_text(
-        "🔍 *Venturing into the unknown...*\n"
-        "👣 You step into a mysterious path... What awaits you? 🤔", 
+        random.choice(EXPLORATION_MESSAGES),
         parse_mode="Markdown"
     )
 
@@ -53,19 +74,11 @@ async def explore(update, context):
 
     if win_chance <= 40:  # 40% Win Rate
         reward = random.randint(8000, 10125)
-        result_message = (
-            f"✨ *Your waifu guided you through the shadows...* 🌙\n"
-            f"🎭 You uncovered *a legendary hidden treasure*! 🏆\n"
-            f"💰 **Reward:** `{reward}` Tokens! 🎉"
-        )
+        result_message = random.choice(WIN_MESSAGES).format(reward)
     else:  # 60% Loss Rate
         loss = random.randint(200, 500)
-        result_message = (
-            f"💀 *Trapped in a cursed labyrinth...* 🕸️\n"
-            f"⚠ Your waifu tried to warn you, but it was *too late*! 😱\n"
-            f"🩸 You barely escaped with `{loss}` Tokens… and a heart full of regret."
-        )
-        reward = -loss  # Deduct loss from balance
+        result_message = random.choice(LOSS_MESSAGES).format(loss)
+        reward = loss
 
     await user_collection.update_one({'id': user_id}, {'$inc': {'balance': reward}})
     
@@ -75,16 +88,14 @@ async def explore(update, context):
     try:
         await exploring_message.delete()  # Remove "Exploring..." Message
         await update.message.reply_photo(photo=IMAGE_URL, caption=result_message, parse_mode="Markdown")
-    except:
+    except Exception as e:
+        print(f"Image failed to send: {e}")  # Debugging info
         await update.message.reply_text(result_message, parse_mode="Markdown")
 
-    # Schedule cooldown removal asynchronously
-    context.job_queue.run_once(clear_cooldown, COOLDOWN_DURATION, data=user_id)
+    context.job_queue.run_once(clear_cooldown, COOLDOWN_DURATION, context=user_id)
 
-async def clear_cooldown(context: CallbackContext) -> None:
-    """Removes user from cooldown list."""
-    user_id = context.job.data  # Correct way to access job data
-    if user_id in user_cooldowns:
-        del user_cooldowns[user_id]
+async def clear_cooldown(context: CallbackContext):
+    user_id = context.job.context
+    user_cooldowns.pop(user_id, None)
 
 application.add_handler(CommandHandler("explore", explore, block=True))
