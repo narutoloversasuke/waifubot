@@ -1,7 +1,4 @@
-import random
-import asyncio
-from datetime import datetime, timedelta
-from telegram.ext import CommandHandler, CallbackContext
+ext import CommandHandler, CallbackContext
 from shivu import application, user_collection
 
 COOLDOWN_DURATION = 30  # Cooldown in seconds
@@ -11,28 +8,23 @@ IMAGE_URL = "https://postimg.cc/xJKjGvKn"  # Adventure Image
 
 async def explore(update, context):
     if update.message.chat.type == "private":
-        await update.message.reply_text("🚫 *This command only works in group chats!*", parse_mode="Markdown")
+        await updhis command only works in group chats!*", parse_mode="Markdown")
         return
 
     user_id = update.effective_user.id
 
-    if update.message.reply_to_message:
+    if update.message.repsage:
         await update.message.reply_text("⚠ *You can't use this command as a reply!*", parse_mode="Markdown")
         return
 
-    # Cooldown check
-    if user_id in user_cooldowns and (datetime.utcnow() - user_cooldowns[user_id]) < timedelta(seconds=COOLDOWN_DURATION):
-        remaining_time = int((timedelta(seconds=COOLDOWN_DURATION) - (datetime.utcnow() - user_cooldowns[user_id])).total_seconds())
-        await update.message.reply_text(f"⏳ *Patience, young explorer...* You must wait `{remaining_time}` seconds before venturing again!", parse_mode="Markdown")
-        return
-
+    
     # Fetch user balance
     user_data = await user_collection.find_one({'id': user_id}, projection={'balance': 1})
     balance = user_data.get('balance', 0)
     explore_cost = 500  
 
     if balance < explore_cost:
-        await update.message.reply_text("❌ *Insufficient energy!* You need at least *500 tokens* to explore! 🔥", parse_mode="Markdown")
+        aw.message.reply_text("❌ *Insufficient energy!* You need at least *500 tokens* to explore! 🔥", parse_mode="Markdown")
         return
 
     # Deduct exploration fee
@@ -41,7 +33,7 @@ async def explore(update, context):
     # **Step 1: Send "Exploring..." Message**
     exploring_message = await update.message.reply_text(
         "🔍 *Venturing into the unknown...*\n"
-        "👣 You step into a mysterious path... What awaits you? 🤔", 
+        "👣 You ste a mysterious path... What awaits you? 🤔", 
         parse_mode="Markdown"
     )
 
