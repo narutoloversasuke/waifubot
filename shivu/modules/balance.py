@@ -4,18 +4,16 @@ from telegram.ext import CommandHandler, CallbackContext
 from shivu import application, user_collection
 from datetime import datetime, timedelta
 
-COOLDOWN_DURATION = 30
-COMMAND_BAN_DURATION = 600
+COOLDOWN_DURATION = 30  # Cooldown duration for command use in seconds
+COMMAND_BAN_DURATION = 600  # Time for banning a user in seconds
 
-last_command_time = {}
+# To track when each user last used a command
 user_cooldowns = {}
 
 async def check_balance(user_id, required_balance):
     user_data = await user_collection.find_one({'id': user_id}, projection={'balance': 1})
-    user_balance = user_data.get('balance', 0)
-    if user_balance < required_balance:
-        return False
-    return True
+    user_balance = user_data.get('balance', 0) if user_data else 0
+    return user_balance >= required_balance
 
 async def balance(update, context):
     user_id = update.effective_user.id
@@ -41,6 +39,7 @@ async def random_daily_reward(update, context):
         await update.message.reply_text("This command cannot be used as a reply to someone else's message.")
         return
 
+    # Check cooldown
     if user_id in user_cooldowns and (datetime.utcnow() - user_cooldowns[user_id]) < timedelta(seconds=COOLDOWN_DURATION):
         remaining_time = COOLDOWN_DURATION - (datetime.utcnow() - user_cooldowns[user_id]).total_seconds()
         await update.message.reply_text(f"You must wait {int(remaining_time)} seconds before using /explore again.")
@@ -51,24 +50,24 @@ async def random_daily_reward(update, context):
         await update.message.reply_text("You need at least 300 Gold coins to use /explore.")
         return
 
+    # Deduct crime fee
     await user_collection.update_one({'id': user_id}, {'$inc': {'balance': -crime_fee}})
 
+    # Reward logic
     random_reward = random.randint(8000, 10125)
-
     congratulatory_messages = ["Explore a dungeon", "Explore a dark forest", "Explore ruins", "Explore an elvish village", "Explore a goblin nest", "Explore an orc den"]
     random_message = random.choice(congratulatory_messages)
 
-    await user_collection.update_one(
-        {'id': user_id},
-        {'$inc': {'balance': random_reward}}
-    )
-    last_command_time[user_id] = datetime.utcnow()
+    # Add reward to user balance
+    await user_collection.update_one({'id': user_id}, {'$inc': {'balance': random_reward}})
 
+    # Update cooldown
     user_cooldowns[user_id] = datetime.utcnow()
 
     await update.message.reply_text(f"You {random_message} and got {random_reward} Gold Coins.🤫")
 
 async def mtop(update, context):
+    # Fetch top 10 users based on their balance
     top_users = await user_collection.find({}, projection={'id': 1, 'first_name': 1, 'last_name': 1, 'balance': 1}).sort('balance', -1).limit(10).to_list(10)
 
     top_users_message = "Top 10 Rich Hunters data.\n\n"
@@ -97,14 +96,12 @@ async def daily_reward(update, context):
             await update.message.reply_text(f"Soory ! hunter but you already claimed . Next reward in: `{formatted_time}`.")
             return
 
-    await user_collection.update_one(
-        {'id': user_id},
-        {'$inc': {'balance': 2000}, '$set': {'last_daily_reward': datetime.utcnow()}}
-    )
-
-    await update.message.reply_text("Congratulations! You claim $ `2000` Gold coins as a daily reward.")
+    # Claim daily reward
+    await user_collection.update_one({'id': user_id}, {'$inc': {'balance': 2000}, '$set': {'last_daily_reward': datetime.utcnow()}})
+    await update.message.reply_text("Congratulations! You claimed $ `2000` Gold coins as a daily reward.")
 
 async def format_time_delta(delta):
+    # Format time into hours, minutes, seconds
     seconds = delta.total_seconds()
     hours, remainder = divmod(seconds, 3600)
     minutes, seconds = divmod(remainder, 60)
