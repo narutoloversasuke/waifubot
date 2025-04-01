@@ -17,16 +17,21 @@ async def check_balance(user_id, required_balance):
 
 async def balance(update, context):
     user_id = update.effective_user.id
-    user_data = await user_collection.find_one({'id': user_id})
+    user_data = await user_collection.find_one({'id': user_id}, projection={'balance': 1, 'loan': 1})  
 
     if user_data:
         balance_amount = user_data.get('balance', 0)
+        loan_amount = user_data.get('loan', 0)  # Loan amount fetch kar rahe hain
+        
         balance_message = f"🏦 *Your Current Balance:* \n💰 Gold Coins: `{balance_amount}`"
+        
+        # Agar loan > 0 hai toh usko bhi dikhayenge
+        if loan_amount > 0:
+            balance_message += f"\n💳 Loan Amount: `{loan_amount}` Gold Coins"
     else:
         balance_message = "⚠️ You are not eligible to be a Hunter 🍂"
 
     await update.message.reply_text(balance_message, parse_mode="Markdown")
-        
 
 async def random_daily_reward(update, context):
     if update.message.chat.type == "private":
