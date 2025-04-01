@@ -65,7 +65,7 @@ async def explore(update, context):
             f"⚠ Your waifu tried to warn you, but it was *too late*! 😱\n"
             f"🩸 You barely escaped with `{loss}` Tokens… and a heart full of regret."
         )
-        reward = loss
+        reward = -loss  # Deduct loss from balance
 
     await user_collection.update_one({'id': user_id}, {'$inc': {'balance': reward}})
     
@@ -78,10 +78,13 @@ async def explore(update, context):
     except:
         await update.message.reply_text(result_message, parse_mode="Markdown")
 
+    # Schedule cooldown removal asynchronously
     context.job_queue.run_once(clear_cooldown, COOLDOWN_DURATION, data=user_id)
-    
-    async def clear_cooldown(context: telegram.ext.CallbackContext) -> None:
-    user_id = context.job.data  # ✅ Correct way to access job data
-    # Your cooldown logic here...
+
+async def clear_cooldown(context: CallbackContext) -> None:
+    """Removes user from cooldown list."""
+    user_id = context.job.data  # Correct way to access job data
+    if user_id in user_cooldowns:
+        del user_cooldowns[user_id]
 
 application.add_handler(CommandHandler("explore", explore, block=True))
