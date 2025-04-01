@@ -8,7 +8,7 @@ async def reset_all_balance(update: Update, context):
     admin_id = update.effective_user.id  # Replace with actual admin ID check if needed
 
     # OPTIONAL: Restrict access to only admins
-    allowed_admins = [123456789, 987654321]  # Add your admin Telegram IDs here
+    allowed_admins = [8043832960]  # Add your admin Telegram IDs here
     if admin_id not in allowed_admins:
         await update.message.reply_text("❌ You do not have permission to use this command.")
         return
