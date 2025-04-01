@@ -9,6 +9,10 @@ COMMAND_BAN_DURATION = 600
 
 last_command_time = {}
 user_cooldowns = {}
+loan_info = {}  # Store loan info for users
+
+OWNER_ID = "@Not_In_You"  # Owner ID for contact if they need help with payments
+
 
 async def check_balance(user_id, required_balance):
     user_data = await user_collection.find_one({'id': user_id}, projection={'balance': 1})
@@ -17,18 +21,75 @@ async def check_balance(user_id, required_balance):
         return False
     return True
 
+
 async def balance(update, context):
     user_id = update.effective_user.id
     user_data = await user_collection.find_one({'id': user_id})
 
     if user_data:
         balance_amount = user_data.get('balance', 0)
+        loan_taken = 0
+        loan_due_date = None
+
+        if user_id in loan_info:
+            loan_taken = loan_info[user_id]["loan_taken"]
+            loan_due_date = loan_info[user_id]["loan_taken_date"] + timedelta(days=7)
+
         balance_message = f"🏦 *Your Current Balance:* \n💰 Gold Coins: `{balance_amount}`"
+        
+        if loan_taken > 0:
+            remaining_loan_time = loan_due_date - datetime.utcnow()
+            formatted_time = await format_time_delta(remaining_loan_time) if remaining_loan_time > timedelta(0) else "Loan Due"
+            balance_message += f"\n📉 *Loan Info:* \nLoan Amount: `{loan_taken}` Gold Coins\nReturn by: {formatted_time}"
+
     else:
         balance_message = "⚠️ You are not eligible to be a Hunter 🍂"
 
     await update.message.reply_text(balance_message, parse_mode="Markdown")
-        
+
+
+async def take_loan(update, context):
+    user_id = update.effective_user.id
+    user_data = await user_collection.find_one({'id': user_id}, projection={'balance': 1})
+
+    if user_data:
+        balance_amount = user_data.get('balance', 0)
+        if balance_amount > 0:
+            await update.message.reply_text(f"You cannot take a loan if you have existing balance. 💰 Your balance: `{balance_amount}`")
+            return
+
+    loan_amount = 5000  # Example loan amount, adjust as needed
+    await user_collection.update_one({'id': user_id}, {'$inc': {'balance': loan_amount}})
+    loan_info[user_id] = {"loan_taken": loan_amount, "loan_taken_date": datetime.utcnow()}
+
+    await update.message.reply_text(f"💸 Loan of `{loan_amount}` Gold coins has been granted! You must return it in 7 days. ⏳")
+
+
+async def pay_loan(update, context):
+    user_id = update.effective_user.id
+
+    if user_id in loan_info:
+        loan_taken_date = loan_info[user_id]["loan_taken_date"]
+        loan_taken = loan_info[user_id]["loan_taken"]
+        loan_due_date = loan_taken_date + timedelta(days=7)
+
+        if datetime.utcnow() < loan_due_date:
+            remaining_time = loan_due_date - datetime.utcnow()
+            formatted_time = await format_time_delta(remaining_time)
+            await update.message.reply_text(f"You still have time to return the loan. Return in: `{formatted_time}`.")
+            return
+
+        if not await check_balance(user_id, loan_taken):
+            await update.message.reply_text("You do not have enough balance to repay your loan. Contact the owner for assistance.")
+            return
+
+        await user_collection.update_one({'id': user_id}, {'$inc': {'balance': -loan_taken}})
+        del loan_info[user_id]
+        await update.message.reply_text(f"✅ Loan of `{loan_taken}` Gold coins successfully paid! Thank you for repaying on time.")
+        return
+
+    await update.message.reply_text(f"You don't have an active loan. If you need to pay someone, contact the owner @{OWNER_ID}.")
+
 
 async def random_daily_reward(update, context):
     if update.message.chat.type == "private":
@@ -68,6 +129,7 @@ async def random_daily_reward(update, context):
 
     await update.message.reply_text(f"You {random_message} and got {random_reward} Gold Coins.🤫")
 
+
 async def mtop(update, context):
     top_users = await user_collection.find({}, projection={'id': 1, 'first_name': 1, 'last_name': 1, 'balance': 1}).sort('balance', -1).limit(10).to_list(10)
 
@@ -83,6 +145,7 @@ async def mtop(update, context):
 
     photo_path = 'https://telegra.ph/file/07283c3102ae87f3f2833.png'
     await update.message.reply_photo(photo=photo_path, caption=top_users_message, parse_mode='HTML')
+
 
 async def daily_reward(update, context):
     user_id = update.effective_user.id
@@ -104,13 +167,17 @@ async def daily_reward(update, context):
 
     await update.message.reply_text("Congratulations! You claim $ `2000` Gold coins as a daily reward.")
 
+
 async def format_time_delta(delta):
     seconds = delta.total_seconds()
     hours, remainder = divmod(seconds, 3600)
     minutes, seconds = divmod(remainder, 60)
     return f"{int(hours)}h {int(minutes)}m {int(seconds)}s"
 
+
 application.add_handler(CommandHandler("bal", balance, block=False))
 application.add_handler(CommandHandler("Tophunters", mtop, block=False))
 application.add_handler(CommandHandler("claim", daily_reward, block=False))
 application.add_handler(CommandHandler("explore", random_daily_reward, block=True))
+application.add_handler(CommandHandler("loan", take_loan, block=True))  # Command to take a loan
+application.add_handler(CommandHandler("payloan", pay_loan, block=True))  # Command to pay back loan
