@@ -1,70 +1,87 @@
 import random
+import asyncio
+from datetime import datetime, timedelta
 from telegram.ext import CommandHandler, CallbackContext
 from shivu import application, user_collection
-from datetime import datetime, timedelta
 
-COOLDOWN_DURATION = 30
-COMMAND_BAN_DURATION = 600
-
-last_command_time = {}
+COOLDOWN_DURATION = 30  # Cooldown in seconds
 user_cooldowns = {}
 
-# Image link provided by you
-image_link = "https://postimg.cc/xJKjGvKn"
+IMAGE_URL = "https://postimg.cc/xJKjGvKn"  # Adventure Image
 
-async def random_daily_reward(update, context):
+async def explore(update, context):
     if update.message.chat.type == "private":
-        await update.message.reply_text("This command can only be used in group chats.")
+        await update.message.reply_text("🚫 *This command only works in group chats!*", parse_mode="Markdown")
         return
 
     user_id = update.effective_user.id
 
     if update.message.reply_to_message:
-        await update.message.reply_text("This command cannot be used as a reply to someone else's message.")
+        await update.message.reply_text("⚠ *You can't use this command as a reply!*", parse_mode="Markdown")
         return
 
+    # Cooldown check
     if user_id in user_cooldowns and (datetime.utcnow() - user_cooldowns[user_id]) < timedelta(seconds=COOLDOWN_DURATION):
-        remaining_time = COOLDOWN_DURATION - (datetime.utcnow() - user_cooldowns[user_id]).total_seconds()
-        await update.message.reply_text(f"⏳ *Patience, young explorer...* You must wait `{int(remaining_time)}` seconds before venturing again!")
+        remaining_time = int((timedelta(seconds=COOLDOWN_DURATION) - (datetime.utcnow() - user_cooldowns[user_id])).total_seconds())
+        await update.message.reply_text(f"⏳ *Patience, young explorer...* You must wait `{remaining_time}` seconds before venturing again!", parse_mode="Markdown")
         return
 
+    # Fetch user balance
     user_data = await user_collection.find_one({'id': user_id}, projection={'balance': 1})
-    user_balance = user_data.get('balance', 0)
-    crime_fee = 300
+    balance = user_data.get('balance', 0)
+    explore_cost = 500  
 
-    if user_balance < crime_fee:
-        await update.message.reply_text("❌ *Insufficient energy!* You need at least *500 tokens* to explore! 🔥")
+    if balance < explore_cost:
+        await update.message.reply_text("❌ *Insufficient energy!* You need at least *500 tokens* to explore! 🔥", parse_mode="Markdown")
         return
 
-    await user_collection.update_one({'id': user_id}, {'$inc': {'balance': -crime_fee}})
+    # Deduct exploration fee
+    await user_collection.update_one({'id': user_id}, {'$inc': {'balance': -explore_cost}})
 
+    # **Step 1: Send "Exploring..." Message**
+    exploring_message = await update.message.reply_text(
+        "🔍 *Venturing into the unknown...*\n"
+        "👣 You step into a mysterious path... What awaits you? 🤔", 
+        parse_mode="Markdown"
+    )
+
+    # **Step 2: Simulate Time Passing (Suspense Effect)**
+    await asyncio.sleep(random.randint(2, 4))  
+
+    # Adventure Outcome (40% Win, 60% Loss)
     win_chance = random.randint(1, 100)
-    
-    if win_chance <= 40:  # 40% chance to win
-        random_reward = random.randint(8000, 10125)
+
+    if win_chance <= 40:  # 40% Win Rate
+        reward = random.randint(8000, 10125)
         result_message = (
             f"✨ *Your waifu guided you through the shadows...* 🌙\n"
             f"🎭 You uncovered *a legendary hidden treasure*! 🏆\n"
-            f"💰 **Reward:** `{random_reward}` Tokens! 🎉"
+            f"💰 **Reward:** `{reward}` Tokens! 🎉"
         )
-        await user_collection.update_one({'id': user_id}, {'$inc': {'balance': random_reward}})
-    else:  # 60% chance to lose
-        random_reward = random.randint(200, 500)
+    else:  # 60% Loss Rate
+        loss = random.randint(200, 500)
         result_message = (
             f"💀 *Trapped in a cursed labyrinth...* 🕸️\n"
             f"⚠ Your waifu tried to warn you, but it was *too late*! 😱\n"
-            f"🩸 You barely escaped with `{random_reward}` Tokens… and a heart full of regret."
+            f"🩸 You barely escaped with `{loss}` Tokens… and a heart full of regret."
         )
-        await user_collection.update_one({'id': user_id}, {'$inc': {'balance': random_reward}})
+        reward = loss
+
+    await user_collection.update_one({'id': user_id}, {'$inc': {'balance': reward}})
     
-    last_command_time[user_id] = datetime.utcnow()
     user_cooldowns[user_id] = datetime.utcnow()
 
-    await update.message.reply_photo(photo=image_link, caption=result_message, parse_mode="Markdown")
+    # **Step 3: Try Sending Image (Retry if Fails)**
+    try:
+        await exploring_message.delete()  # Remove "Exploring..." Message
+        await update.message.reply_photo(photo=IMAGE_URL, caption=result_message, parse_mode="Markdown")
+    except:
+        await update.message.reply_text(result_message, parse_mode="Markdown")
 
-async def clear_command_ban(context: CallbackContext):
+    context.job_queue.run_once(clear_cooldown, COOLDOWN_DURATION, context=user_id)
+
+async def clear_cooldown(context: CallbackContext):
     user_id = context.job.context
-    if user_id in user_cooldowns:
-        del user_cooldowns[user_id]
+    user_cooldowns.pop(user_id, None)
 
-application.add_handler(CommandHandler("explore", random_daily_reward, block=True))
+application.add_handler(CommandHandler("explore", explore, block=True))
