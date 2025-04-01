@@ -108,9 +108,9 @@ async def grasp(update: Update, context: CallbackContext) -> None:
         await update.message.reply_text("Nahh You Can't use This Types of words in your guess..❌️")  
         return  
 
-    name_parts = last_characters[chat_id]['name'].lower().split()
+    name_parts = last_characters[chat_id]['name'].lower().split()  
 
-if sorted(name_parts) == sorted(guess.split()) or any(part == guess for part in name_parts):  
+    if sorted(name_parts) == sorted(guess.split()) or any(part == guess for part in name_parts):  
         first_correct_guesses[chat_id] = user_id  
 
         user = await user_collection.find_one({'id': user_id})  
@@ -176,7 +176,7 @@ def main() -> None:
 
     application.run_polling(drop_pending_updates=True)
 
-if name == "main":
+if __name__ == "__main__":
     shivuu.start()
 
     LOGGER.info("Bot started")  
