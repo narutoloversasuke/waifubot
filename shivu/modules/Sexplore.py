@@ -79,5 +79,9 @@ async def explore(update, context):
         await update.message.reply_text(result_message, parse_mode="Markdown")
 
     context.job_queue.run_once(clear_cooldown, COOLDOWN_DURATION, data=user_id)
+    
+    async def clear_cooldown(context: telegram.ext.CallbackContext) -> None:
+    user_id = context.job.data  # ✅ Correct way to access job data
+    # Your cooldown logic here...
 
 application.add_handler(CommandHandler("explore", explore, block=True))
