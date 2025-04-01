@@ -7,13 +7,13 @@ async def shop(update, context):
     shop_message = (
         "🌸 **Welcome to the Waifu Shop!** 🌸\n\n"
         "🔹 **Available Waifus:**\n"
-        "⚪ Common: Ŧ2,000,000 💸\n"
-        "🟣 Normal: Ŧ4,000,000 💸\n"
-        "🔵 Medium: Ŧ8,000,000 💸\n"
-        "🟡 Legendary: Ŧ15,000,000 💸\n"
-        "💮 Special Edition: Ŧ20,000,000 💸\n"
-        "🔮 Limited Edition: Ŧ300,000,000 💸\n"
-        "🎐 Celestial Beauty: Ŧ4,000,000,000 💸\n\n"
+        "⚪ Common: Ŧ2,00,000 💸\n"
+        "🟣 Normal: Ŧ3,00,000 💸\n"
+        "🔵 Medium: Ŧ4,00,000 💸\n"
+        "🟡 Legendary: Ŧ5,00,000 💸\n"
+        "💮 Special Edition: Ŧ8,00,000 💸\n"
+        "🔮 Limited Edition: Ŧ9,00,000 💸\n"
+        "🎐 Celestial Beauty: Ŧ11,00,000 💸\n\n"
         "✨ **Only the worthy can claim the rarest waifus!** ✨\n"
         "👉 **To Buy a Waifu, use:** `/buy <pick_id>`"
     )
@@ -48,13 +48,13 @@ async def buy(update, context):
 
     # 📌 Price Mapping
     rarity_prices = {
-        "⚪ Common": 2000000,
-        "🟣 Normal": 4000000,
-        "🔵 Medium": 8000000,
-        "🟡 Legendary": 15000000,
-        "💮 Special Edition": 20000000,
-        "🔮 Limited Edition": 300000000,
-        "🎐 Celestial Beauty": 4000000000,
+        "⚪ Common": 200000,
+        "🟣 Normal": 300000,
+        "🔵 Medium": 400000,
+        "🟡 Legendary": 500000,
+        "💮 Special Edition": 800000,
+        "🔮 Limited Edition": 9000000,
+        "🎐 Celestial Beauty": 1100000,
     }
 
     rarity = character.get('rarity', 'Unknown Rarity')
