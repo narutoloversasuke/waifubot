@@ -1,48 +1,42 @@
-import random
-import math
-from telegram.ext import CommandHandler, CallbackContext
-from shivu import application, user_collection
-from datetime import datetime, timedelta
+from telegram.ext import CommandHandler
+from telegram import Update
+from shivu import user_collection
 
-COOLDOWN_DURATION = 30
-COMMAND_BAN_DURATION = 600
+# Reset balance for a particular user
+async def reset_balance(update: Update, context):
+    # Check if the command has one argument (user ID)
+    if len(context.args) == 1:
+        try:
+            user_id = int(context.args[0])
+            # Update balance to 0 for the given user_id
+            result = await user_collection.update_one({'id': user_id}, {'$set': {'balance': 0}})
+            
+            if result.matched_count:
+                await update.message.reply_text(f"✅ Balance for user ID {user_id} has been reset to 0.")
+            else:
+                await update.message.reply_text(f"⚠️ No user found with ID {user_id}.")
+        except ValueError:
+            await update.message.reply_text("❌ Please provide a valid user ID.")
+    else:
+        await update.message.reply_text("❌ Please provide a user ID to reset the balance.")
 
-last_command_time = {}
-user_cooldowns = {}
-
-# Command to reset a specific user's balance
-async def reset_balance(update, context):
-    if len(context.args) != 1:
-        await update.message.reply_text("⚠️ Usage: `/resetbal <user_id>`", parse_mode="Markdown")
+# Reset balance for all users
+async def reset_all_balance(update: Update, context):
+    # Only allow specific users (e.g., admins) to run this command
+    admin_ids = [8043832960, 6130275861]  # Admin user IDs
+    
+    if update.effective_user.id not in admin_ids:
+        await update.message.reply_text("❌ You don't have permission to reset the balances for all users.")
         return
 
-    target_user_id = context.args[0]
+    # Reset all users' balance to 0
+    result = await user_collection.update_many({}, {'$set': {'balance': 0}})
+    
+    if result.modified_count:
+        await update.message.reply_text(f"✅ All user balances have been reset to 0.")
+    else:
+        await update.message.reply_text("⚠️ No users' balances were updated.")
 
-    if target_user_id not in ["6130275861", "8043832960"]:
-        await update.message.reply_text("❌ You don't have permission to reset this user's balance.")
-        return
-
-    target_user_id = int(target_user_id)
-    user_data = await user_collection.find_one({'id': target_user_id})
-
-    if not user_data:
-        await update.message.reply_text(f"⚠️ No user found with ID `{target_user_id}`.", parse_mode="Markdown")
-        return
-
-    await user_collection.update_one({'id': target_user_id}, {'$set': {'balance': 0, 'loan': 0}})
-
-    await update.message.reply_text(f"✅ Balance and Loan for user `{target_user_id}` have been successfully reset.", parse_mode="Markdown")
-
-# Command to reset balance for all users
-async def reset_all_balances(update, context):
-    admin_id = update.effective_user.id
-    if admin_id not in [6130275861, 8043832960]:  # Only allow these IDs to reset all balances
-        await update.message.reply_text("❌ You do not have permission to reset all balances.")
-        return
-
-    await user_collection.update_many({}, {'$set': {'balance': 0, 'loan': 0}})
-    await update.message.reply_text("✅ All users' balances and loans have been reset successfully.")
-
-application.add_handler(CommandHandler("bal", balance, block=False))
+# Add handlers for the commands
 application.add_handler(CommandHandler("resetbal", reset_balance, block=False))
-application.add_handler(CommandHandler("resetallbal", reset_all_balances, block=False))
+application.add_handler(CommandHandler("resetallbal", reset_all_balance, block=False))
