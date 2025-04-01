@@ -78,10 +78,6 @@ async def explore(update, context):
     except:
         await update.message.reply_text(result_message, parse_mode="Markdown")
 
-    context.job_queue.run_once(clear_cooldown, COOLDOWN_DURATION, context=user_id)
-
-async def clear_cooldown(context: CallbackContext):
-    user_id = context.job.context
-    user_cooldowns.pop(user_id, None)
+    context.job_queue.run_once(clear_cooldown, COOLDOWN_DURATION, data=user_id)
 
 application.add_handler(CommandHandler("explore", explore, block=True))
